@@ -3,14 +3,12 @@
     <!--头部-->
     <div class="Header">
       <div style="height: 60px;line-height: 60px;display: flex;">
-
         <!--LOGO-->
         <div class="HeaderLeft" v-if="!isPhone">
           <div class="LOGO" @click="$router.push('/home')">
             Wanwan
           </div>
         </div>
-
         <!--电脑导航栏(Element-ui版)-->
         <!--<div style="flex:3" v-if="!isPhone">-->
         <!--  <el-menu class="el-menu-demo" mode="horizontal" router style="display: flex;justify-content: center">-->
@@ -20,7 +18,6 @@
         <!--    <el-menu-item index="/About">关于</el-menu-item>-->
         <!--  </el-menu>-->
         <!--</div>-->
-
         <!--电脑导航栏-->
         <!--<div style="flex: 3;display: flex;justify-content: center" v-if="!isPhone" class="HeaderMiddle NavBar">-->
         <!--  <div class="NavBarItem" @click="$router.push('/home')">主页</div>-->
@@ -35,7 +32,6 @@
           <router-link to="/guestbook" class="NavBarItem">留言板</router-link>
           <router-link to="/about" class="NavBarItem">关于</router-link>
         </div>
-
         <!--手机导航栏-->
         <div v-if="isPhone" style="flex: 1">
           <el-dropdown trigger="click">
@@ -50,7 +46,11 @@
             </el-dropdown-menu>
           </el-dropdown>
         </div>
-
+        <div class="HeaderLeft" v-if="isPhone" style="padding: 0">
+          <div class="LOGO" @click="$router.push('/home')">
+            Wanwan
+          </div>
+        </div>
         <div style="text-align: right;flex: 1" class="HeaderRight">
           <!--头像-->
           <el-dropdown v-if="JSON.stringify(user)!=='{}'" style="width: 100px;height: 100% ;cursor: pointer;" trigger="click">
@@ -75,14 +75,12 @@
               </el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
-
           <div v-else style="width: 100px;height: 100% ;cursor: pointer; text-align: center;float: right">
             <router-link to="/login">登陆</router-link>
           </div>
         </div>
       </div>
     </div>
-
     <!--主体内容-->
     <div style="min-height: calc(100vh - 100px);" class="Main">
       <div style="height: 60px;"></div>
@@ -92,7 +90,6 @@
       <!-- 不需要缓存的视图组件 -->
       <router-view v-if="!$route.meta.keepAlive"></router-view>
     </div>
-
     <!--站脚-->
     <div style="" class="Footer">
       备案号：<a href="https://beian.miit.gov.cn/" target="_blank" style="">湘ICP备2024049847号-1</a>

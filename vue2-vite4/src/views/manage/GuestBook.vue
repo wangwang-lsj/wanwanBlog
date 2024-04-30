@@ -1,8 +1,8 @@
 <template>
   <div>
     <div style="margin: 10px 0">
-      <el-input style="width: 200px;margin-right: 10px" placeholder="请输入留言昵称" prefix-icon="el-icon-search" v-model="name"></el-input>
-      <el-button style="margin-left: 5px" type="primary" @click="load">搜索</el-button>
+      <el-input style="width: 200px;margin-right: 10px" placeholder="请输入留言昵称" prefix-icon="el-icon-search" v-model="nickname" @keydown.enter.native="load" @keydown.esc.native="reset"></el-input>
+      <el-button style="margin-left: 5px" type="primary" @click="load" >搜索</el-button>
       <el-button style="margin-left: 5px" type="warning" @click="reset">重置</el-button>
     </div>
     <div style="margin: 10px 0">
@@ -57,7 +57,7 @@
                 @change="reply(scope.row)"
                 >
               </el-input>
-            <div v-if="scope.row.replyContent" slot="reference" class="text-oneLine-omit">{{ scope.row.replyContent }}</div>
+            <div v-if="scope.row.replyContent" slot="reference" class="text-oneLine-omit" style="user-select: none;cursor: pointer">{{ scope.row.replyContent }}</div>
             <el-button v-else slot="reference" style="float: right;">回复</el-button>
           </el-popover>
         </template>
@@ -142,6 +142,7 @@
 
 <script>
 import leaveWordApi from "@/api/leaveWordApi.js";
+import manage from "@/views/manage/Manage.vue";
 
 export default {
   name: "GuestBook",
@@ -155,7 +156,7 @@ export default {
       addDialog: false,
       multipleSelection: [],
       form: {},
-      name: '',
+      nickname: '',
     }
   },
   created() {
@@ -167,7 +168,9 @@ export default {
           {
             pageNum: this.pageNum,
             pageSize: this.pageSize,
-          }
+            nickName: this.nickname
+          },
+          "manage"
       ).then(res=>{
         if(res.code=== '200'){
           this.tableData = res.data.records
@@ -176,7 +179,7 @@ export default {
       })
     },
     reset(){
-      this.name = ''
+      this.nickname = ''
       this.load()
     },
     handleAdd(){
@@ -215,9 +218,9 @@ export default {
       row.replied = true
       leaveWordApi.reply(row).then(res=>{
         if (res.code === '200'){
-          this.$message.success("操作成功");
+          this.$message.success("回复成功");
         }else{
-          this.$message.error("操作失败")
+          this.$message.error("回复失败")
         }
         this.load()
       })

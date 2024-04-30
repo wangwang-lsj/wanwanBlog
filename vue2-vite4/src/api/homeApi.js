@@ -5,10 +5,13 @@ const homeApi = {
      * 获取所有轮播图
      * @returns {*}
      */
-    getAll() {
+    getAll(source) {
         return request({
             method: "GET",
-            url: "/home/slider"
+            url: "/home/slider",
+            headers: {
+                "Wan-Source": source
+            }
         });
     },
 
@@ -61,7 +64,8 @@ const homeApi = {
             url: "/home/slider",
             data
         });
-    }
+    },
+
 };
 
 export default homeApi;

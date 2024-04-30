@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wanwan.springboot.common.Result;
+import com.wanwan.springboot.config.AuthAccess;
 import com.wanwan.springboot.entity.LeaveWord;
 import com.wanwan.springboot.utils.IpUtil;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <p>
@@ -41,19 +43,22 @@ public class LeaveWordController {
     //         map.put("total", leaveWordService.count());
     //         return Result.success(map);
     // }
+    @AuthAccess
     @GetMapping("/page")
-    public Result page(@RequestHeader(name = "Referer", required = false) String Referer,
+    public Result page(@RequestHeader(name = "Wan-Source", required = false) String WanSource,
                        @RequestParam Integer pageNum,
-                       @RequestParam Integer pageSize
+                       @RequestParam Integer pageSize,
+                       @RequestParam(defaultValue = "") String nickName
     ) {
-        System.out.println(Referer);
-        if (Referer.contains("manage")) {
-            QueryWrapper<LeaveWord> queryWrapper = new QueryWrapper<>();
-            queryWrapper.orderByDesc("create_time");
-            return Result.success(leaveWordService.page(new Page<>(pageNum, pageSize), queryWrapper));
+        // System.out.println(WanSource);
+        if (Objects.equals(WanSource, "manage")) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("records", leaveWordService.getByPage(new Page<>(pageNum, pageSize),nickName,null));
+            map.put("total", leaveWordService.count());
+            return Result.success(map);
         }
         Map<String, Object> map = new HashMap<>();
-        map.put("records", leaveWordService.getByPage(new Page<>(pageNum, pageSize)));
+        map.put("records", leaveWordService.getByPage(new Page<>(pageNum, pageSize),nickName,1));
         map.put("total", leaveWordService.count());
         return Result.success(map);
     }
@@ -70,6 +75,7 @@ public class LeaveWordController {
 
 
     // 新增
+    @AuthAccess
     @PostMapping()
     public Result leaveMessage(@RequestBody LeaveWord leaveWord, HttpServletRequest request) {
         leaveWord.setIp(IpUtil.getIpAddr(request));
@@ -85,7 +91,7 @@ public class LeaveWordController {
         return Result.success(leaveWordService.update(updateWrapper));
     }
 
-    @PutMapping("/reply")
+    @PutMapping()
     public Result reply(@RequestBody LeaveWord leaveWord) {
         leaveWord.setReplyTime(DateUtil.date());
         return Result.success(leaveWordService.saveOrUpdate(leaveWord));

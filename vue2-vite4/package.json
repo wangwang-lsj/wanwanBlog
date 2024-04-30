@@ -1,7 +1,7 @@
 {
   "name": "vue2-vite4",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,12 +12,12 @@
     "sass": "^1.32.7",
     "sass-loader": "^12.0.0",
     "vite": "^4.3.0",
-    "vite-plugin-require-transform": "^1.0.21",
     "vite-plugin-vue2": "^2.0.3",
     "vue-particles": "^1.0.9"
   },
   "dependencies": {
     "@amap/amap-jsapi-loader": "^1.0.1",
+    "@rollup/plugin-commonjs": "^25.0.7",
     "@wangeditor/editor": "^5.1.23",
     "@wangeditor/editor-for-vue": "^1.0.2",
     "axios": "^1.6.7",
@@ -29,6 +29,7 @@
     "v-viewer": "^1.6.4",
     "validator": "^13.11.0",
     "vite-plugin-commonjs": "^0.10.1",
+    "vite-plugin-require-transform": "^1.0.21",
     "vue": "^2.6.14",
     "vue-lazyload": "^1.2.3",
     "vue-router": "^3.5.1",

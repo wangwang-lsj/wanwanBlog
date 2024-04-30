@@ -5,6 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wanwan.springboot.common.Result;
+import com.wanwan.springboot.config.AuthAccess;
 import com.wanwan.springboot.entity.dto.MyRequestBody;
 import javafx.beans.DefaultProperty;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class CategoryController {
     @Resource
     private ICategoryService categoryService;
 
-
+    @AuthAccess
     @GetMapping()
     public Result getAll() {
         return Result.success(categoryService.list());

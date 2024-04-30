@@ -66,7 +66,6 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -119,7 +118,7 @@ export default {
       })
     },
     sendLeaveMessage(){
-      console.log(this.caller);
+      // console.log(this.caller);
       leaveWordApi.leaveMessage({
         nickName:this.caller,
         content:this.leaveMessage

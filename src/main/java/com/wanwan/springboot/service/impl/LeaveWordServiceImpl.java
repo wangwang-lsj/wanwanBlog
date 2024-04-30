@@ -24,7 +24,7 @@ public class LeaveWordServiceImpl extends ServiceImpl<LeaveWordMapper, LeaveWord
     private LeaveWordMapper leaveWordMapper;
 
     @Override
-    public List<LeaveWord> getByPage(Page<LeaveWord> page) {
-        return leaveWordMapper.getByPage(page);
+    public List<LeaveWord> getByPage(Page<LeaveWord> page,String nickName,Integer enable) {
+        return leaveWordMapper.getByPage(page,nickName,enable);
     }
 }

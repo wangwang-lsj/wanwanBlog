@@ -1,13 +1,11 @@
 <template>
   <div style="border: 1px solid #ccc" ref="wangEditor">
     <Toolbar
-        style="border-bottom: 1px solid #ccc"
+        style="border-bottom: 1px solid #ccc;position:sticky; top: 0;z-index: 999"
         :editor="editor"
         :mode="mode"
         :defaultConfig="toolbarConfig"
         v-if="editable"
-
-
     />
     <!--v-if="editable"-->
     <Editor

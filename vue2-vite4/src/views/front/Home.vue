@@ -3,14 +3,14 @@
     <div style="margin: 0;display: flex;justify-content: center">
       <!--左-->
       <div style="flex: 1; max-width: 400px;" class="hidden-md-and-down">
-        <el-card class="box-card">
-          <div slot="header" class="clearfix" style="text-align: center">
-            <span style="font-size: xx-large"><i class="iconfont icon-gonggao" style="font-size: 32px;color: green"></i>公告</span>
-          </div>
-          <div>
-            主页不知道放什么了
-          </div>
-        </el-card>
+        <!--<el-card class="box-card">-->
+        <!--  <div slot="header" class="clearfix" style="text-align: center">-->
+        <!--    <span style="font-size: xx-large"><i class="iconfont icon-gonggao" style="font-size: 32px;color: green"></i>公告</span>-->
+        <!--  </div>-->
+        <!--  <div>-->
+        <!--    主页不知道放什么了-->
+        <!--  </div>-->
+        <!--</el-card>-->
       </div>
       <!--中-->
       <div style="flex: 3;max-width: 600px;margin: 0 10px;">
@@ -19,19 +19,33 @@
           <!--height=10vh -->
           <el-carousel :interval="4000" height="25vh" style="border-radius: 5px;">
             <el-carousel-item v-for="item in images" :key="item.id">
-              <el-image :src="item.url"></el-image>
+              <img :src="item.url" style="width: 100%;height: 100%"></img>
             </el-carousel-item>
           </el-carousel>
         </div>
         <!--内容-->
         <div style="margin: 10px 0">
+            <!--<viewer :images="urls">-->
+            <!--  <img v-for="(url,index) in urls" :key="index" :src="url" v-lazy="url" alt="test" width="100%">-->
+            <!--</viewer>-->
+          <div class="HomeArticle" v-for="article in homeArticles" :key="article.id" :style="browserWidth<768?'flex-direction: column;':''" @click="goDetail(article.id)">
+            <div class="HomeArticleCover"><img :src="article.cover"></div>
+            <div style="flex: 1;display: flex;justify-content: space-between;flex-direction: column">
+              <div class="HomeArticleTD">
+                <h3>{{article.title}}</h3>
+                <p>{{article.description}}</p>
+              </div>
 
-            <viewer :images="urls">
-              <img v-for="(url,index) in urls" :key="index" :src="url" v-lazy="url" alt="test" width="100%">
-            </viewer>
-
+              <div style="display: flex;justify-content: space-between;" class="HomeArticleInfo">
+                <span><i class="iconfont icon-shijian"></i>{{formatTimeAgo(article.publicDate)}}</span>
+                <span><i class="iconfont icon-liulanliang"></i>{{article.readCount}}</span>
+                <span><i class="iconfont icon-dianzan"></i>{{article.likes}}</span>
+                <span><i class="iconfont icon-pinglun"></i>{{article.commentCount}}</span>
+                <span>{{article.categoryName}}<i class="iconfont icon-category"></i></span>
+              </div>
+            </div>
+          </div>
         </div>
-
       </div>
       <!--右-->
       <div style="flex: 1;max-width: 400px" class="hidden-md-and-down">
@@ -44,7 +58,8 @@
 <script>
 
 import homeApi from "@/api/homeApi.js";
-
+import articleApi from "@/api/articleApi.js";
+import {formatTimeAgo} from "@/utils/MyUtils.js";
 export default {
   name: "Home",
   data(){
@@ -54,15 +69,7 @@ export default {
       ],
       images:[],
       browserWidth: window.innerWidth,
-      urls: [
-        'https://fuss10.elemecdn.com/a/3f/3302e58f9a181d2509f3dc0fa68b0jpeg.jpeg',
-        'https://fuss10.elemecdn.com/1/34/19aa98b1fcb2781c4fba33d850549jpeg.jpeg',
-        'https://fuss10.elemecdn.com/0/6f/e35ff375812e6b0020b6b4e8f9583jpeg.jpeg',
-        'https://fuss10.elemecdn.com/9/bb/e27858e973f5d7d3904835f46abbdjpeg.jpeg',
-        'https://fuss10.elemecdn.com/d/e6/c4d93a3805b3ce3f323f7974e6f78jpeg.jpeg',
-        'https://fuss10.elemecdn.com/3/28/bbf893f792f03a54408b3b7a7ebf0jpeg.jpeg',
-        'https://fuss10.elemecdn.com/2/11/6535bcfb26e4c79b48ddde44f4b6fjpeg.jpeg',
-      ]
+      homeArticles: [],
     }
   },
   created() {
@@ -89,15 +96,30 @@ export default {
     next()
   },
   methods:{
+    formatTimeAgo,
     load(){
       homeApi.getAll().then(res=>{
         if(res.code === '200'){
           this.images = res.data
         }
       })
+      articleApi.getByHomeShow().then(res=>{
+        if(res.code === '200'){
+          this.homeArticles = res.data
+        }
+      })
     },
     handleResize() {
       this.browserWidth = window.innerWidth;
+    },
+    goDetail(id){
+      if(window.getSelection().toString()===''){
+        this.$router.push({
+          // path:'/article/detail',
+          name: '文章详细',
+          query:{id: id}
+        })
+      }
     },
   }
 }
@@ -107,9 +129,67 @@ export default {
 .HomeBg{
   min-height: 100vh;
   padding: 10px 0;
-  background-image: url("@/assets/img/mcbg.jpg");
+  /*background-image: url("@/assets/img/mcbg.jpg");*/
   background-repeat: no-repeat;
   background-attachment: fixed;
 }
+@media screen and (max-width: 768px) {
+  .HomeArticleCover{
+    width: 100%;
+    height: 11.5rem;
+    margin-bottom: .5rem;
+    margin-right: 0;
+  }
+  .HomeArticleCover img{
+    width: 100%;
+    height: 100%;
+  }
+}
+@media screen and (min-width: 768px) {
+  .HomeArticleCover{
+    width:12rem;
+    height:7.5rem;
+    margin-right: 1rem;
+  }
+  .HomeArticleCover img{
+    width:192px;
+    height:120px;
+    border-radius: 5px;
+  }
+}
+.HomeArticle{
+  display: flex;
+  padding: 0.618rem;
+  background: rgb(255, 255, 255,0.6);
+  border-radius: 5px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.HomeArticle:hover{
+  background: rgb(255, 255, 255,0.8);
 
+}
+
+.HomeArticleTD{
+
+}
+.HomeArticleTD h3{
+  margin-bottom: 0.5rem;
+}
+.HomeArticleTD p{
+  min-height: 3rem;
+  color: rgba(0, 0, 0, .43);
+  font-size: 0.9rem;
+}
+.HomeArticleInfo{
+  font-size: 12px;
+  height: 16px;
+  line-height: 16px;
+}
+.HomeArticleInfo span{
+  display: flex;
+  align-items: center;
+  height: 16px;
+  line-height: 16px;
+}
 </style>

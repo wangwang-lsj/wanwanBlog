@@ -1,6 +1,7 @@
 package com.wanwan.springboot.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
@@ -57,7 +58,10 @@ public class User implements Serializable {
       @ApiModelProperty("头像路径")
       private String avatarUrl;
 
-      @ApiModelProperty("角色")
+      @ApiModelProperty("角色ID")
+      private Integer roleId;
+      @TableField(exist = false)
+      @ApiModelProperty("角色名")
       private String role;
       @ApiModelProperty("性别")
       private String sex;
@@ -67,4 +71,5 @@ public class User implements Serializable {
       private String recentlyLanded;
       @ApiModelProperty("姓名")
       private String realName;
+
 }

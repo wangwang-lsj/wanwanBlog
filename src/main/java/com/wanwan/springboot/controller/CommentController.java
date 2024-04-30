@@ -33,6 +33,7 @@ public class CommentController {
 
         return Result.success(commentService.getCommentListByPage(pageNum,pageSize,articleId,currentUserId));
     }
+    @AuthAccess
     @GetMapping("/replies")
     public Result getReplies(@RequestParam Integer commentId,
                              @RequestParam Integer startIndex,
@@ -40,6 +41,7 @@ public class CommentController {
                              @RequestParam Integer currentUserId) {
         return Result.success(commentService.getReplyListByPage(commentId, startIndex,count,currentUserId));
     }
+    @AuthAccess
     @GetMapping("/{articleId}")
     public Result getCountByArticleId(@PathVariable Integer articleId){
         return Result.success(commentMapper.getCountByArticleId(articleId));

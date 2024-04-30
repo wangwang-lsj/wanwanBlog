@@ -7,7 +7,6 @@
       <!--中-->
       <div :style="{padding: browserWidth < 600 ? '0px' : '0 10px',minWidth: browserWidth < 1200 ? '100%' : '60%'}">
         <div :style="browserWidth<600?'padding:5px':'padding: 10px'" class="ArticleItem">
-
           <!--文章标题-->
           <h1 class="ArticleItemTitle">
             {{article.title}}
@@ -18,17 +17,15 @@
             <span>|</span>
             <div><i class="iconfont icon-shijian"></i>{{ publicDate }} {{AmOrPm}}</div>
             <span>|</span>
-            <div><i class="iconfont icon-eye"></i>{{ article.readCount }}次阅读</div>
+            <div><i class="iconfont icon-liulanliang"></i>{{ article.readCount }}次阅读</div>
             <span>|</span>
-            <div><i class="iconfont icon-like"></i>{{ article.likes }}个点赞</div>
+            <div><i class="iconfont icon-dianzan"></i>{{ article.likes }}个点赞</div>
           </div>
-
           <!--文章详细-->
           <div style="width: 100%" class="ArticleItemContent">
             <!--不加v-if控制组件是否渲染不显示数据，猜测可能是，在数据没到的时候就渲染了组件，但是没数据就是空的了-->
             <WangEditor :content="this.article.content" :editable="false" v-if="articleCreated" @sendWords="handleWords" :key="componentKey"></WangEditor>
           </div>
-
           <!--文章底部-->
           <div style="display: flex;align-items: center">
             <div style="flex: 1; display: flex;">
@@ -40,7 +37,7 @@
             </div>
             <div style="flex: 1;display: flex;justify-content: right">
               <div @click="handLike" style="user-select: none">
-                <i class="iconfont icon-like" :style="{color: isLike?'#fc5531':'#999aaa',fontSize: fontSize+'px'}" ref="articleLikes" >{{article.likes}}</i>
+                <i class="iconfont icon-dianzan" :style="{color: isLike?'#fc5531':'#999aaa',fontSize: fontSize+'px'}" ref="articleLikes" >{{article.likes}}</i>
               </div>
               <div>
                 <i class="iconfont icon-pinglun" style="margin-left: 10px; font-size: 24px;">{{this.commentCount}}</i>
@@ -80,7 +77,6 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -96,7 +92,8 @@ export default {
   data(){
     return{
       articleId: this.$route.query.id,
-      userId: localStorage.getItem("user")?JSON.parse(localStorage.getItem("user")).id:{},
+      currentUser: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : {},
+
       article:{},
       menuList:[],
       content:'',
@@ -121,7 +118,7 @@ export default {
   // },
 
   created() {
-    this.load(this.articleId)
+    this.load()
 
   },
   mounted() {
@@ -154,6 +151,11 @@ export default {
 
     });
   },
+  beforeRouteUpdate(to, from, next) {
+    next()//执行这个之后，id就更新了
+    this.goRelatedDetail(this.$route.query.id)
+
+  },
   // 删除滚动监听器，建议使用beforeRouteLeave，因为destroyed()钩子在路由跳转时不会触发(加了这个就跳不了路由)
   beforeRouteLeave(to,from,next) {
     window.removeEventListener('resize', this.handleResize);
@@ -166,6 +168,9 @@ export default {
 
   methods:{
     load(){
+      if(Object.keys(this.currentUser).length === 0) {
+        this.currentUser.id = 0
+      }
       articleApi.getOneAll(this.articleId).then(res=>{
         if(res.code ==='200'){
           // console.log(res)
@@ -180,7 +185,7 @@ export default {
         // console.log(this.article)
       })
 
-      articleApi.getLike(this.articleId,this.userId).then(res=>{
+      articleApi.getLike(this.articleId,this.currentUser.id).then(res=>{
         if(res.code === '200'){
           // console.log(res)
           if(res.data.length !==0){
@@ -209,10 +214,14 @@ export default {
     },
 
     handLike(){
+      if(this.currentUser.id === 0) {
+        this.$message("请先登录")
+        return
+      }
       if (this.isLike===true){
         articleApi.likeOrDisLike({
           articleId: this.articleId,
-          userId: this.userId,
+          userId: this.currentUser.id,
           isLike: this.isLike,
         }).then(res=>{
           if (res.code ==='200'){
@@ -224,7 +233,7 @@ export default {
       }else {
         articleApi.likeOrDisLike({
           articleId: this.articleId,
-          userId: this.userId,
+          userId: this.currentUser.id,
           isLike: this.isLike,
         }).then(res=>{
           if(res.code ==='200'){
@@ -260,7 +269,7 @@ export default {
     loadRelatedArticle(categoryId){
       articleApi.getRelations({
         pageNum: 1,
-        pageSize: 10,
+        pageSize: 5,
         articleId: this.articleId,
         categoryId: categoryId,
       }).then(res=>{

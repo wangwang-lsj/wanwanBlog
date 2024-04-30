@@ -110,7 +110,7 @@ export default {
   },
   methods: {
     load(){
-      homeApi.getAll().then(res=>{
+      homeApi.getAll("manage").then(res=>{
         if(res.code=== '200'){
           this.tableData = res.data
         }

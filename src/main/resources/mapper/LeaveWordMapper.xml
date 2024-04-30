@@ -6,7 +6,15 @@
         SELECT lw.*,u.nickname as replyUserName
         from leave_word lw
             LEFT JOIN user u on lw.reply_user_id=u.id
-        where lw.enable=1
+        <where>
+            <if test="nickName!='' and nickName!=null">
+                lw.nick_name LIKE CONCAT('%',#{nickName},'%')
+            </if>
+            <if test="enable==1">
+                lw.enable=1
+            </if>
+        </where>
         ORDER BY lw.create_time DESC
+
     </select>
 </mapper>

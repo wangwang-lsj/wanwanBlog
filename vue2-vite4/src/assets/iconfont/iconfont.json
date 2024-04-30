@@ -6,6 +6,41 @@
   "description": "个人博客",
   "glyphs": [
     {
+      "icon_id": "6945275",
+      "name": "评论",
+      "font_class": "pinglun",
+      "unicode": "e61a",
+      "unicode_decimal": 58906
+    },
+    {
+      "icon_id": "6756279",
+      "name": "浏览量",
+      "font_class": "liulanliang",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "689261",
+      "name": "类别",
+      "font_class": "category",
+      "unicode": "e7f8",
+      "unicode_decimal": 59384
+    },
+    {
+      "icon_id": "6380878",
+      "name": "点赞",
+      "font_class": "dianzan",
+      "unicode": "ec8c",
+      "unicode_decimal": 60556
+    },
+    {
+      "icon_id": "6865349",
+      "name": "时间",
+      "font_class": "shijian",
+      "unicode": "e610",
+      "unicode_decimal": 58896
+    },
+    {
       "icon_id": "26532597",
       "name": "相关推荐",
       "font_class": "xiangguantuijian",
@@ -111,25 +146,11 @@
       "unicode_decimal": 58893
     },
     {
-      "icon_id": "777845",
-      "name": "分类",
-      "font_class": "category",
-      "unicode": "e652",
-      "unicode_decimal": 58962
-    },
-    {
       "icon_id": "1305451",
       "name": "标签",
       "font_class": "biaoqian",
       "unicode": "e63d",
       "unicode_decimal": 58941
-    },
-    {
-      "icon_id": "8019605",
-      "name": "时间",
-      "font_class": "shijian1",
-      "unicode": "e614",
-      "unicode_decimal": 58900
     },
     {
       "icon_id": "11125633",
@@ -158,34 +179,6 @@
       "font_class": "huanyihuan",
       "unicode": "e653",
       "unicode_decimal": 58963
-    },
-    {
-      "icon_id": "667792",
-      "name": "评论",
-      "font_class": "pinglun",
-      "unicode": "e6ad",
-      "unicode_decimal": 59053
-    },
-    {
-      "icon_id": "777843",
-      "name": "赞",
-      "font_class": "dianzan",
-      "unicode": "e651",
-      "unicode_decimal": 58961
-    },
-    {
-      "icon_id": "1301372",
-      "name": "时间",
-      "font_class": "shijian",
-      "unicode": "e65f",
-      "unicode_decimal": 58975
-    },
-    {
-      "icon_id": "6337455",
-      "name": "点赞",
-      "font_class": "like",
-      "unicode": "ec7f",
-      "unicode_decimal": 60543
     },
     {
       "icon_id": "6337474",

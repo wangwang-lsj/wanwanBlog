@@ -15,7 +15,7 @@
     <!--  </div>-->
     <!--</div>-->
     <!-- 主评论表情输入框 -->
-    <emoji-text ref="mainCommentRef" @comment="addFirstComment" :avatarUrl="currentUser.avatarUrl"></emoji-text>
+    <emoji-text ref="firstCommentRef" @comment="addFirstComment" :avatarUrl="currentUser.avatarUrl"></emoji-text>
     <!--一级评论和对一级评论的回复，二级评论-->
     <div style="min-height: 500px;margin: 20px auto">
       <div v-for="firstComment in commentList" :key="firstComment.id"
@@ -107,7 +107,7 @@
             <!--    <el-button type="primary" round @click="send">发送</el-button>-->
             <!--  </div>-->
             <!--</div>-->
-            <emoji-text ref="mainCommentRef" @comment="addSecondCommentContent" :avatarUrl="currentUser.avatarUrl"></emoji-text>
+            <emoji-text ref="secondCommentRef" @comment="addSecondCommentContent" :avatarUrl="currentUser.avatarUrl"></emoji-text>
           </div>
         </div>
 
@@ -172,6 +172,9 @@ export default {
   },
   methods: {
     load() {
+      if(Object.keys(this.currentUser).length === 0) {
+        this.currentUser.id = 0
+      }
       commentApi.getByArticleId({
         pageNum: this.pageNum,
         pageSize: this.pageSize,
@@ -213,10 +216,11 @@ export default {
       this.load()
     },
     addFirstComment(content) {
-      if(!this.currentUser) {
+      if(this.currentUser.id === 0) {
         this.$message("请先登录")
         return
       }
+
       if (!content) {
         this.$message("评论不能为空")
         return
@@ -232,7 +236,7 @@ export default {
       commentApi.addComment(this.comment).then(res => {
         if (res.code === '200') {
           // this.$message.success("评论成功")
-          this.$refs['mainCommentRef'].clearTextareaContent()
+          this.$refs['firstCommentRef'].clearTextareaContent()
           // 加一再减一,不然滚动加载出错哦
           this.commentList.unshift(res.data)
           if (this.total >= 10) {
@@ -244,11 +248,19 @@ export default {
       })
     },
     addSecondCommentContent(content){
+      if(this.currentUser.id === 0) {
+        this.$message("请先登录")
+        return
+      }
+      if (!content) {
+        this.$message("评论不能为空")
+        return
+      }
       this.secondCommentContent = content
     },
     // 感谢gpt大哥送来的灵感
     async openInputBox(secondComment,firstComment) {
-      console.log(secondComment,firstComment)
+      // console.log(secondComment,firstComment)
       for(let i = 0;i<this.commentList.length;i++){
         this.commentList[i].replyUserId = false
       }
@@ -301,7 +313,7 @@ export default {
               comment.children.pop()
             }
             if(comment.children===null){
-              console.log(comment)
+              // console.log(comment)
               comment.children = []
               comment.children.unshift(res.data)
             }else{
@@ -323,6 +335,10 @@ export default {
       })
     },
     likeOrDislike(comment) {
+      if(this.currentUser.id === 0) {
+        this.$message("请先登录")
+        return
+      }
       if (comment.isLike) {
         commentApi.disLike(comment.id, this.currentUser.id).then(res => {
           if (res.code === '200') {

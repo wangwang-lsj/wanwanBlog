@@ -45,7 +45,7 @@ public class TokenUtils {
                 .withAudience(userId)
                 //主题
                 .withSubject("token")
-                //2小时候token过期
+                //24小时候token过期
                 .withExpiresAt(DateUtil.offsetHour(new Date(),24))
                 //以password作为token的密钥
                 .sign(Algorithm.HMAC256(sign));

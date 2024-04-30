@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wanwan.springboot.common.Result;
+import com.wanwan.springboot.config.AuthAccess;
 import com.wanwan.springboot.entity.Files;
 import com.wanwan.springboot.entity.User;
 import com.wanwan.springboot.mapper.FileMapper;
@@ -48,6 +49,7 @@ public class FileController {
      * @param file
      * @return
      */
+    @AuthAccess
     @PostMapping("/upload")
     public Result upload(@RequestParam MultipartFile file)throws IOException {
         String originalFilename = file.getOriginalFilename();
@@ -83,6 +85,7 @@ public class FileController {
         return Result.success(url);
     }
 
+    @AuthAccess
     @GetMapping("/{fileUUID}")
     public void download(@PathVariable String fileUUID, HttpServletResponse response)throws IOException{
         File downloadFile = new File(fileUploadPath+fileUUID);

@@ -17,5 +17,5 @@ import java.util.List;
 public interface ILeaveWordService extends IService<LeaveWord> {
 
 
-    List<LeaveWord> getByPage(Page<LeaveWord> page);
+    List<LeaveWord> getByPage(Page<LeaveWord> page,String nickName,Integer enable);
 }

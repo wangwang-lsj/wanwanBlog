@@ -1,6 +1,7 @@
 package com.wanwan.springboot.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wanwan.springboot.common.Result;
 import com.wanwan.springboot.config.AuthAccess;
@@ -41,6 +42,7 @@ public class ArticleController {
     @Resource
     private IUserArticleLikeService userArticleLikeService;
 
+    @AuthAccess
     @GetMapping("/page")
     public Result page(@RequestParam Integer pageNum,
                        @RequestParam Integer pageSize,
@@ -54,12 +56,13 @@ public class ArticleController {
         return Result.success(articleMapper.selectAllByPage(new Page<>(pageNum, pageSize), title, description, username, categoryName, orderTarget,order));
     }
 
+    @AuthAccess
     @GetMapping("/hots")
     public Result getHots(@RequestParam Integer pageNum,
                          @RequestParam Integer pageSize) {
         return Result.success(articleService.page(new Page<>(pageNum, pageSize), new QueryWrapper<Article>().orderByDesc("likes")));
     }
-
+    @AuthAccess
     @GetMapping("/relations")
     public Result getRelations(@RequestParam Integer pageNum,
                                @RequestParam Integer pageSize,
@@ -69,7 +72,7 @@ public class ArticleController {
         return Result.success(articleService.page(new Page<>(pageNum, pageSize), new QueryWrapper<Article>().eq("category_id",categoryId).ne("id",articleId).orderByDesc("read_count")));
     }
 
-    @AuthAccess
+
     @GetMapping()
     public Result getAll() {
         return Result.success(articleService.list());
@@ -79,9 +82,15 @@ public class ArticleController {
     public Result getById(@PathVariable Integer id) {
         return Result.success(articleService.getById(id));
     }
+
+    @AuthAccess
+    @GetMapping("/home")
+    public Result getByHomeShow(){
+        return Result.success(articleMapper.getHomeArticle());
+    }
     @AuthAccess
     @GetMapping("/{id}/all")
-    public Result selectOneAll(@PathVariable Integer id) {
+    public Result getOneAll(@PathVariable Integer id) {
         return Result.success(articleService.getOneAllById(id));
     }
 
@@ -96,6 +105,8 @@ public class ArticleController {
         queryWrapper.eq("article_Id",articleId);
         return Result.success(userArticleLikeService.list(queryWrapper));
     }
+
+    @AuthAccess
     @GetMapping("/statistics")
     public Result statistics(){
         Map<String,Object> map = new HashMap<>();
@@ -108,7 +119,7 @@ public class ArticleController {
     // 新增或者更新
     @PutMapping
     public Result save(@RequestBody Article article) {
-        articleService.save(article);
+        articleService.saveOrUpdate(article);
         return Result.success();
     }
 
@@ -137,10 +148,20 @@ public class ArticleController {
         articleService.removeByIds(ids);
         return Result.success();
     }
+    @AuthAccess
     @PatchMapping("/{id}")
     public Result recordReadCount(@PathVariable Integer id){
         articleMapper.updateArticleReadCount(id,1);
         return Result.success();
     }
+    @PatchMapping("/{id}/{homeShow}")
+    public Result changeHomeShow(@PathVariable Integer id,@PathVariable Boolean homeShow){
+        UpdateWrapper<Article> updateWrapper = new UpdateWrapper<>();
+        updateWrapper.eq("id",id);
+        updateWrapper.set("home_show",homeShow);
+        articleService.update(updateWrapper);
+        return Result.success();
+    }
+
 }
 

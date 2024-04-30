@@ -138,13 +138,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     }
 
     public User getUserInfo(UserDTO userDTO){
-        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("username",userDTO.getUsername());
-        queryWrapper.eq("password", userDTO.getPassword());
-
         User one = null;
         try {
-            one = getOne(queryWrapper);
+            one = userMapper.getOneAll(userDTO.getUsername(),userDTO.getPassword());
         } catch (Exception e) {
             LOG.error(e);
             throw new ServiceException(ResultCodeEnum.SYSTEM_ERROR);

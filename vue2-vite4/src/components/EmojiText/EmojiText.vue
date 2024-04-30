@@ -343,10 +343,10 @@ export default {
         /* 发表评论 */
         postComment() {
 
-            if (!this.textareaContent) {
-                this.$toast('warn','内容不能为空哦')
-                return
-            }
+            // if (!this.textareaContent) {
+            //   this.$message("评论不能为空")
+            //   return
+            // }
 
             let _this = this
 

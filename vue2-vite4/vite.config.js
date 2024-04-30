@@ -9,7 +9,7 @@ export default {
     publicDir: resolve("", './dist'), //默认'public'  作为静态资源服务的文件夹  (打包public文件夹会没有，里面得东西会直接编译在dist文件下)
     assetsInclude: resolve("", './src/assets'), // 静态资源处理
     plugins: [
-        // commonjs(),
+        commonjs(),
         createVuePlugin(/* options */),
         // 使vite可以使用required
         requireTransform({
@@ -50,6 +50,7 @@ export default {
         //路径使用别名
         alias: {
             "@": resolve("", "src"),
+
         },
         //引入文件的后缀名称，可以省略。如果出现同名，按照数组加载的优先顺序
         extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],

@@ -38,7 +38,7 @@
       <el-table-column prop="id" label="ID" width="60"></el-table-column>
       <el-table-column prop="role" label="角色" width="140">
         <template slot-scope="scope">
-          <el-tag type="primary" v-for="item in roles" :key="item.id" v-if="scope.row.role === item.flag">{{item.name}}</el-tag>
+          <el-tag type="primary" v-for="item in roles" :key="item.id" v-if="scope.row.roleId === item.id">{{item.name}}</el-tag>
         </template>
       </el-table-column>
       <el-table-column prop="username" label="用户名" width="140"></el-table-column>
@@ -81,8 +81,8 @@
           <el-input v-model="form.username" autocomplete="off"></el-input>
         </el-form-item>
         <el-form-item label="角色" >
-          <el-select clearable v-model="form.role" placeholder="请选择角色" style="width: 100%">
-            <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.flag"></el-option>
+          <el-select clearable v-model="form.roleId" placeholder="请选择角色" style="width: 100%">
+            <el-option v-for="item in roles" :key="item.name" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="昵称" >

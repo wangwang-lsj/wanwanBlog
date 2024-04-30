@@ -19,22 +19,37 @@ public class InterceptorConfig implements WebMvcConfigurer {
                 //拦截所有请求，通过判断token来决定是否需要登陆
                 .addPathPatterns("/**")
                 .excludePathPatterns(
-                        "/api/users/login",
-                        "/api/users/register",
+                        // 登录注册放开
+                        // "/api/users/login",
+                        // "/api/users/register",
+
+                        // 静态资源放开
                         "/api/**/export",
                         "/api/**/import",
-                        "/api/files/**",
-                        "/api/roles",
                         "/api/swagger-resources/**",
                         "/api/webjars/**",
                         "/api/v2/**",
-                        "/api/swagger-ui.html/**",
+                        "/api/swagger-ui.html/**"
 
-                        "/api/home/slider/enable",
-                        "/api/articles/**",
-                        "/api/leavewords/**",
-                        "/api/category/**",
-                        "/api/comments/**"
+                        // // 主页可用轮播图
+                        // "/api/home/slider",
+                        //
+                        // // 文章页面
+                        // "/api/articles/page",
+                        // "/api/articles/hots",
+                        // "/api/articles/relations",
+                        // "/api/articles/statistics",
+                        // "/api/articles/page",
+                        //
+                        // // 文章评论
+                        // "/api/comments/**",
+                        //
+                        // // 留言板
+                        // "/api/leavewords/**",
+                        //
+                        //
+                        // "/api/roles",
+                        // "/api/categories/**"
 
                 );
 

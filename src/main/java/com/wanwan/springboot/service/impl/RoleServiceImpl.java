@@ -45,13 +45,13 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
             if(menu.getPid() != null && !menuIdsCopy.contains(menu.getPid())){
                 RoleMenu roleMenu = new RoleMenu();
                 roleMenu.setRoleId(roleId);
-                roleMenu.setMenu(menu.getPid());
+                roleMenu.setMenuId(menu.getPid());
                 roleMenuMapper.insert(roleMenu);
                 menuIdsCopy.add(menu.getPid());
             }
             RoleMenu roleMenu = new RoleMenu();
             roleMenu.setRoleId(roleId);
-            roleMenu.setMenu(menuId);
+            roleMenu.setMenuId(menuId);
             roleMenuMapper.insert(roleMenu);
         }
     }

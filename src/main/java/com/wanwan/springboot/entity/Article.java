@@ -49,10 +49,9 @@ public class Article implements Serializable {
     @ApiModelProperty("作者ID")
     private Integer authorId;
 
-    @TableField(exist = false)
     @ApiModelProperty("发布日期")
     private Date publicDate;
-    @TableField(exist = false)
+
     @ApiModelProperty("更新日期")
     private Date updateDate;
 
@@ -64,7 +63,8 @@ public class Article implements Serializable {
 
     @ApiModelProperty("类别ID")
     private Integer categoryId;
-
+    @ApiModelProperty("主页显示")
+    private Boolean homeShow;
     @TableField(exist = false)
     @ApiModelProperty("作者用户名")
     private String userName;

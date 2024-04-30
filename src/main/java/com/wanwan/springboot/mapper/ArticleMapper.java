@@ -29,4 +29,7 @@ public interface ArticleMapper extends BaseMapper<Article> {
 
     @Update("update article set read_count = read_count + #{num} where id = #{id}")
     Boolean updateArticleReadCount(@Param("id")Integer id,@Param("num")Integer num);
+
+
+    List<Article> getHomeArticle();
 }

@@ -27,9 +27,7 @@ public class Slideshow implements Serializable {
     private Integer sortNum;
 
     private Boolean enable;
-    @TableField(exist = false)
     private Date updateTime;
-    @TableField(exist = false)
     private Date createTime;
 
     private static final long serialVersionUID = 1L;

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author：玩玩
@@ -27,9 +28,10 @@ public class HomeController {
     SlideshowMapper slideshowMapper;
     @AuthAccess
     @GetMapping("/slider")
-    public Result getAll(@RequestHeader(name = "Referer", required = false) String referer){
+    public Result getAll(@RequestHeader(name = "Wan-Source", required = false) String WanSource){
         QueryWrapper<Slideshow> queryWrapper = new QueryWrapper<>();
-        if (referer.contains("manage")) {
+        System.out.println(WanSource);
+        if (Objects.equals(WanSource, "manage")) {
             queryWrapper.orderByAsc("sort_num");
             return Result.success(slideshowService.list(queryWrapper));
         }
@@ -44,7 +46,7 @@ public class HomeController {
     public Result deleteById(@PathVariable Integer id){
         return Result.success(slideshowService.removeById(id));
     }
-    @DeleteMapping("/slider/")
+    @DeleteMapping("/slider")
     public Result deleteBatch(@RequestBody List<Integer> ids){
         return Result.success(slideshowService.removeBatchByIds(ids));
     }

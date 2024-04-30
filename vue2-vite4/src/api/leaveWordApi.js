@@ -6,12 +6,12 @@ const leaveWordApi = {
      * @param params
      * @returns {*}
      */
-    page(params) {
+    page(params,source) {
         return request({
             method: "GET",
             url: "/leavewords/page",
             params,
-            headers: { "Wan-Source": "test" }
+            headers: { "Wan-Source": source }
         });
     },
 

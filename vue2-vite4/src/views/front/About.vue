@@ -26,9 +26,7 @@
           <p><i class="iconfont icon-aixin" style="color: red"></i>简单的实现了响应式布局，可以在电脑和手机上游览博客</p>
           <p><i class="iconfont icon-aixin" style="color: red"></i>游客可对网站进行留言，欢迎留言并提供建议，博主也可对留言进行回复</p>
           <p><i class="iconfont icon-aixin" style="color: red"></i>目前初具雏形吧，博客潜力巨大。。。。。。</p>
-
         </div>
-
         <div class="BigBlock" style="margin-top: 16px;">
           <div class="TitleFontLine">技术实现</div>
           <p><i class="iconfont icon-aixin" style="color: red"></i>vue2构建工具为vite，用户端手写的UI组件 + Vue.js，管理端使用ElementUI + Vue.js</p>
@@ -46,15 +44,12 @@
           <p><i class="iconfont icon-aixin" style="color: red"></i>完善的网站统计，如文章阅读不再是简单的+1，而是根据同一天内或者其他，一个ip点击才增加一次，然后使用echart将数据展示在后台管理</p>
           <p><i class="iconfont icon-aixin" style="color: red"></i>将vue2升级成vue3，及其它相关的也升级</p>
         </div>
-
-
         <div class="BigBlock" style="margin-top: 16px;">
           <div class="TitleFontLine">关于博主</div>
           <p><i class="iconfont icon-aixin" style="color: red"></i>博主02，湖南衡阳人，软件工程本科即将毕业</p>
           <p><i class="iconfont icon-aixin" style="color: red"></i>兴趣：游戏、动漫、小说、电影</p>
           <p><i class="iconfont icon-aixin" style="color: red"></i>了解的技术有：ElementUI、Vue.js、JavaScript、java、C</p>
           <p><i class="iconfont icon-aixin" style="color: red"></i>前端布局和样式</p>
-
         </div>
       </div>
       <div class="RightPart">
@@ -103,7 +98,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </div>
 </template>

@@ -37,7 +37,17 @@
         <el-table-column prop="categoryName" label="类别名称" width="80">
         </el-table-column>
         <el-table-column prop="description" label="描述">
-
+          <template v-slot="scope">
+            <el-popover
+                placement="right"
+                width="400"
+                trigger="click"
+                :content="scope.row.description">
+              <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" slot="reference">
+                {{scope.row.description}}
+              </div>
+            </el-popover>
+          </template>
         </el-table-column>
 
         <el-table-column prop="content" label="内容" width="100">
@@ -67,6 +77,17 @@
         </el-table-column>
         <el-table-column prop="readCount" label="浏览量" width="100"></el-table-column>
         <el-table-column prop="likes" label="点赞" width="100"></el-table-column>
+        <el-table-column prop="homeShow" label="主页展示" width="100">
+          <template v-slot="scope">
+            <el-switch
+                v-model="scope.row.homeShow"
+                @change="changeHomeShow(scope.row)"
+                active-color="#13ce66"
+                inactive-color="#ff4949">
+            </el-switch>
+          </template>
+        </el-table-column>
+
         <el-table-column label="操作" width="200" align="center">
           <template v-slot="scope">
             <el-button type="primary" @click="handleEdit(scope.row)">编辑 <i class="el-icon-edit"></i></el-button>
@@ -182,7 +203,7 @@
           <el-form-item label="封面" >
             <el-upload
                 class="avatar-uploader"
-                :action="''"
+                :action="uploadURl"
                 :show-file-list="false"
                 :on-success="handleAvatarSuccess"
                 :before-upload="beforeAvatarUpload">
@@ -258,10 +279,12 @@ import WangEditor from "@/components/WangEditor.vue";
 import articleApi from "@/api/articleApi.js";
 import categoryApi from "@/api/categoryApi.js";
 import fileApi from "@/api/fileApi.js";
+import Template from "@/views/front/template.vue";
 
 export default {
   name: "Article",
   components: {
+    Template,
     ArticleCategory,
     WangEditor,
   },
@@ -301,7 +324,7 @@ export default {
       articleApi.page({
         pageNum: this.pageNum,
         pageSize: this.pageSize,
-        userName: this.userName,
+        username: this.userName,
         title: this.title,
         categoryName: this.categoryName
       }).then(res => {
@@ -355,10 +378,10 @@ export default {
       this.form.tags = JSON.stringify(this.tagsArr)
       articleApi.save(this.form).then(res => {
         if (res.code === '200') {
-          this.$message.success("添加成功");
+          this.$message.success("保存成功");
           this.editDialogFormVisible = false
         } else {
-          this.$message.error("添加失败")
+          this.$message.error("保存失败")
         }
         this.load()
       })
@@ -445,6 +468,16 @@ export default {
       this.form.content = editDataHtml;
       // console.log(this.content);
     },
+    changeHomeShow(row){
+      articleApi.changeHomeShow(row.id,row.homeShow).then(res => {
+        if (res.code === '200'){
+          this.$message.success("操作成功");
+        }else {
+          this.$message.error("操作失败")
+        }
+        this.load()
+      })
+    }
   }
 }
 </script>

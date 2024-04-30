@@ -12,5 +12,5 @@ import lombok.Data;
 @Data
 public class RoleMenu {
     private Integer roleId;
-    private Integer menu;
+    private Integer menuId;
 }

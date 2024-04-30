@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wanwan.springboot.common.Constants;
 import com.wanwan.springboot.common.Result;
 import com.wanwan.springboot.common.enums.ResultCodeEnum;
+import com.wanwan.springboot.config.AuthAccess;
 import com.wanwan.springboot.entity.User;
 import com.wanwan.springboot.entity.dto.UserDTO;
 import com.wanwan.springboot.entity.dto.UserPasswordDTO;
@@ -49,6 +50,7 @@ public class UserController {
      * @param userDto
      * @return user
      */
+    @AuthAccess
     @PostMapping("/users/register")
     public Result register(@RequestBody UserDTO userDto) {
         String username = userDto.getUsername();
@@ -65,6 +67,7 @@ public class UserController {
      * @param userDto
      * @return userDTO
      */
+    @AuthAccess
     @PostMapping("/users/login")
     public Result login(@RequestBody UserDTO userDto) {
         String username = userDto.getUsername();
@@ -89,12 +92,12 @@ public class UserController {
      */
     @GetMapping("/users/page")
     public Result page(@RequestParam Integer pageNum,
-                             @RequestParam Integer pageSize,
-                             @RequestParam(defaultValue = "") String username,
-                             @RequestParam(defaultValue = "") String nickname,
-                             @RequestParam(defaultValue = "") String address,
-                             @RequestParam(defaultValue = "") String phone,
-                             @RequestParam(defaultValue = "") String email
+                       @RequestParam Integer pageSize,
+                       @RequestParam(defaultValue = "") String username,
+                       @RequestParam(defaultValue = "") String nickname,
+                       @RequestParam(defaultValue = "") String address,
+                       @RequestParam(defaultValue = "") String phone,
+                       @RequestParam(defaultValue = "") String email
     ) {
         return Result.success(userService.findByPageOrSearch(pageNum, pageSize, username, nickname, address, phone, email));
     }

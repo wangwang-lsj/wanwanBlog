@@ -4,13 +4,13 @@
 
     <!-- 在您的 SQL 映射文件中 -->
     <!-- 使用 <include> 标签引入另一个文件中的查询语句 -->
-    <select id="selectReplyTotalCount" resultType="int">
+    <select id="selectCommentCount" resultType="int">
         <include refid="com.wanwan.springboot.mapper.CommentMapper.selectCommentCountSql"/>
     </select>
     <resultMap id="ArticleMap" type="com.wanwan.springboot.entity.Article">
         <result property="id" column="id"/>
         <association property="commentCount" javaType="java.lang.Integer"
-                     select="selectReplyTotalCount" column="id"/>
+                     select="selectCommentCount" column="id"/>
     </resultMap>
 
     <select id="selectAllByPage" resultMap="ArticleMap">
@@ -48,6 +48,12 @@
         where a.id = #{id}
     </select>
 
-
+    <select id="getHomeArticle" resultMap="ArticleMap">
+        select
+            a.*,c.name as categoryName
+            from article a
+            left join category c on a.category_id = c.id
+            where a.home_show=1
+    </select>
 
 </mapper>

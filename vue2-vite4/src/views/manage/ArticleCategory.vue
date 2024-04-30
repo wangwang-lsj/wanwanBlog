@@ -140,10 +140,10 @@ export default {
     save(){
       categoryApi.saveOrUpdate(this.form).then(res=>{
         if (res.code === '200'){
-          this.$message.success("添加成功");
+          this.$message.success("保存成功");
           this.dialogFormVisible=false
         }else{
-          this.$message.error("添加失败")
+          this.$message.error("保存失败")
         }
         this.load()
       })

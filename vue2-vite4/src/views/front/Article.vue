@@ -1,26 +1,22 @@
 <template>
   <div class="ArticleBg">
     <div style="margin: 0;display: flex;justify-content: center;">
-
       <!--左边导航栏-->
       <div style="flex: 1;max-width: 300px;display: flex;justify-content: right" class="hidden-md-and-down">
         <div class="card" style="width: 150px;position: fixed">
           <div class="article-category-item" @click="handSelectBy(item.name)" :class="{'article-category-item-active': item.name === currentCategory}" v-for="item in categoryList" :key="item.id">{{ item.name }}</div>
         </div>
       </div>
-
       <!--中间内容-->
       <div style="flex: 3;max-width: 800px;" :style="browserWidth<600?'padding:0':'padding:0 10px'">
         <div class="card" style="padding: 0">
           <div style="height: 40px;border-bottom: 1px solid #f2f3f5;display: flex;padding: 10px;">
-
             <!--文章类别(桌面)-->
             <div style="flex: 1;width: 200px;">
               <ul class="article-category1" v-if="browserWidth<1200">
                 <li v-for="item in categoryList" :key="item.id" @click="handSelectBy(item.name)" class="article-category1-item" :class="{'article-category1-item-active': item.name === currentCategory}">{{ item.name }}</li>
               </ul>
             </div>
-
             <!--文章类别(移动)-->
             <div style="width: 70px;text-align: center">
               <el-dropdown placement="bottom" @command="handleOrderTarget">
@@ -47,7 +43,6 @@
               </el-dropdown>
             </div>
           </div>
-
           <div v-for="article in articleList" :key="article.id" class="article-box" style="padding: 0 10px;height: 100px;cursor: pointer">
             <div @click="goDetail(article.id)" style="display: flex;width: 100%; height:100%;border-bottom: 1px solid #f2f3f5">
               <div style="flex: 1; width: 0" class="article_title_content">
@@ -59,8 +54,8 @@
                 </div>
                 <div style="display: flex">
                   <div style="flex: 1;font-size: 13px">
-                    <span style="color: #666666;margin-right: 10px"><i class="iconfont icon-eye"></i>{{ article.readCount }}</span>
-                    <span style="color: #666666;margin-right: 10px"><i class="iconfont icon-like"></i>{{ article.likes }}</span>
+                    <span style="color: #666666;margin-right: 10px"><i class="iconfont icon-liulanliang"></i>{{ article.readCount }}</span>
+                    <span style="color: #666666;margin-right: 10px"><i class="iconfont icon-dianzan"></i>{{ article.likes }}</span>
                     <span style="color: #666666;margin-right: 10px"><i class="iconfont icon-pinglun"></i>{{ article.commentCount }}</span>
                   </div>
                   <div style="width: fit-content">
@@ -74,13 +69,11 @@
               </div>
             </div>
           </div>
-          <p v-if="noMore" style="text-align: center">没有更多了</p>
+          <p v-if="noMore && articleList.length>10" style="text-align: center">没有更多了</p>
         </div>
       </div>
-
       <!--右边相关-->
       <div style="flex: 1; max-width: 300px;height: auto;" class="hidden-md-and-down">
-
         <!--搜索-->
         <div class="Search" style="margin-bottom: 10px;display: flex;align-items: center">
           <!--<el-input v-model="searchContent" :placeholder="searchPlaceholder" @keyup.enter.native="handleSearch" ref="search"></el-input>-->
@@ -105,7 +98,6 @@
             <div>{{ statistic.todayRead }}</div>
             <p>今日阅读</p>
           </div>
-
         </div>
         <!--热门推荐-->
         <div class="card HotArticle">
@@ -118,8 +110,7 @@
                 <div style="width: 24px;color: #c93756" class="hotArticleItem" v-if="article.serialNumber===1">{{ article.serialNumber }}</div>
                 <div style="width: 24px;color: #f47983" class="hotArticleItem" v-else-if="article.serialNumber===2">{{ article.serialNumber }}</div>
                 <div style="width: 24px;color: #f9906f" class="hotArticleItem" v-else-if="article.serialNumber===3">{{ article.serialNumber }}</div>
-
-                <div style="width: 24px;color:#9fa4b0;" class="hotArticleItem" v-else>{{ article.serialNumber }}</div>
+                <div style="width: 24px;color: #9fa4b0;" class="hotArticleItem" v-else>{{ article.serialNumber }}</div>
                 <div style="flex: 1" class="text-oneLine-omit">
                   {{article.title}}
                 </div>
@@ -130,7 +121,6 @@
       </div>
     </div>
   </div>
-
 </template>
 
 <script>
@@ -220,6 +210,7 @@ export default {
   methods: {
     //回调函数
     windowScroll() {
+      // console.log(this.noMore)
       if (this.noMore){
         return
       }
@@ -227,8 +218,10 @@ export default {
       var scrollTop = getScrollTop()
       var clientHeight = getClientHeight()
       var scrollHeight = getScrollHeight()
+      // console.log(scrollTop,clientHeight,scrollHeight)
+      // console.log(scrollTop+clientHeight === scrollHeight)
       //如果满足公式则，确实到底了
-      if(scrollTop+clientHeight === scrollHeight){
+      if(scrollTop+clientHeight === scrollHeight-1){
         //发送异步请求请求数据，同时携带offset并自增offset
         //noMore是自定义变量，如果是最后一批数据则以后都不加载
         if(!this.noMore) {

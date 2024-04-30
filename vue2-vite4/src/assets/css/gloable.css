@@ -47,6 +47,10 @@ body{
     padding: 10px;
     border-radius: 10px;
 }
+
+.iconfont{
+    color: #8a8a8a;
+}
 /*解决文字超出div*/
 .wrap{
     table-layout:fixed;

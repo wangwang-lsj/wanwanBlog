@@ -6,6 +6,7 @@ import com.wanwan.springboot.entity.Menu;
 import com.wanwan.springboot.entity.TestModel;
 import com.wanwan.springboot.mapper.MenuMapper;
 import com.wanwan.springboot.mapper.TestMapper;
+import com.wanwan.springboot.mapper.UserMapper;
 import com.wanwan.springboot.service.impl.MenuServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,8 @@ class SpringbootApplicationTests {
     private String url;
     @Autowired
     private TestMapper testMapper;
+    @Autowired
+    private UserMapper userMapper;
     @Test
     void contextLoads() {
         System.out.println(url);
@@ -56,7 +59,9 @@ class SpringbootApplicationTests {
         test.setName("罗书江");
         test.setAge("12");
         testMapper.updateById(test);
-
     }
-
+    @Test
+    void testSelect(){
+        System.out.println(userMapper.getOneAll("wanwan","admin"));
+    }
 }
