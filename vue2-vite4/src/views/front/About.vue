@@ -56,7 +56,7 @@
         <div class="GitPart">
           <div style="background-color: #555555;height: 110px;"></div>
           <div style="position: absolute;top: 70px;text-align: center;width: 100%">
-            <img src="/public/头像.jpg" style="width: 80px; border-radius: 100%">
+            <img src="/头像.jpg" style="width: 80px; border-radius: 100%">
           </div>
           <div style="background-color: #ffffff;height: 100px;">
             <div style="font-size: 18px;text-align: center;margin-top: 50px;">玩玩的Github</div>
@@ -115,15 +115,32 @@ export default {
   },
   methods: {
     copyToClipboard(content) {
-      navigator.clipboard.writeText(content)
-          .then(() => {
-            this.$message.success('已复制到剪切板')
-            // 可以添加一些反馈，如提示用户已复制到剪切板
-          })
-          .catch(err => {
-            console.error('Failed to copy to clipboard:', err);
-            // 复制失败时可以提供一些错误提示
-          });
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(content)
+            .then(() => {
+              this.$message.success('已复制到剪切板')
+              // 可以添加一些反馈，如提示用户已复制到剪切板
+            })
+            .catch(err => {
+              console.error('Failed to copy to clipboard:', err);
+              // 复制失败时可以提供一些错误提示
+            });
+      }else {
+        // 创建text area
+        const textArea = document.createElement('textarea')
+        textArea.value = content
+        // 使text area不在viewport，同时设置不可见
+        document.body.appendChild(textArea)
+        textArea.focus()
+        textArea.select()
+        this.$message.success('已复制到剪切板')
+        return new Promise((res, rej) => {
+          // 执行复制命令并移除文本框
+          document.execCommand('copy') ? res() : rej()
+          textArea.remove()
+        })
+      }
+
     }
   },
 }

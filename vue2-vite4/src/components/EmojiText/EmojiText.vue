@@ -222,7 +222,7 @@ img {
                 <div v-show="emojiPanelActive">
                     <div class="emoji-wrapper scaleUp" @click="activeEmojiPanel">
                         <span @click="addEmoji(emoji)" class="emoji" v-for="(emoji, idx) in emojiList" :key="idx">
-                            <img :src="'/public'+emoji.link" alt="">
+                            <img :src="emoji.link" alt="">
                         </span>
                     </div>
 
@@ -252,7 +252,7 @@ export default {
     props: {
         imgPrefix: { /* 图片路径前缀 */
             type: String,
-            default: '/public'
+            default: ''
         },
         placeholder: { /* 默认占位符 */
             type: String,

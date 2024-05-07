@@ -37,3 +37,6 @@ mybatis-plus:
 files:
   upload:
     path: /home/files/
+security:
+  jwt:
+    secret: wanwan

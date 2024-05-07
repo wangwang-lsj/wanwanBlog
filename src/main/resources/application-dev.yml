@@ -38,11 +38,6 @@ files:
   upload:
     path: D:/IdeaProjects/小白做毕设2024/files/
 
-#files:
-#  upload:
-#    项目的根目录的files文件夹
-#    path: files/
-#files:
-#  upload:
-#     jar包的同级目录files文件夹
-#    path: classpath:/files/
+security:
+  jwt:
+    secret: wanwan

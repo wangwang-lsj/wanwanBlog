@@ -1,43 +1,29 @@
 // vite.config.js
-import { createVuePlugin } from 'vite-plugin-vue2'
+import {defineConfig} from "vite";
 import { resolve } from 'path';
 import requireTransform from 'vite-plugin-require-transform';
-import commonjs from 'vite-plugin-commonjs';
-export default {
+import commonjs from '@rollup/plugin-commonjs';
+import vue from '@vitejs/plugin-vue2'
+export default defineConfig({
      //项目根目录（index.html 文件所在的位置） 默认： process.cwd()
-    base: './', //  开发或生产环境服务的公共基础路径：默认'/'   1、绝对 URL 路径名： /foo/；  2、完整的 URL： https://foo.com/； 3、空字符串或 ./（用于开发环境）
-    publicDir: resolve("", './dist'), //默认'public'  作为静态资源服务的文件夹  (打包public文件夹会没有，里面得东西会直接编译在dist文件下)
-    assetsInclude: resolve("", './src/assets'), // 静态资源处理
+    base: '/', //  开发或生产环境服务的公共基础路径：默认'/'   1、绝对 URL 路径名： /foo/；  2、完整的 URL： https://foo.com/； 3、空字符串或 ./（用于开发环境）
+    // publicDir: resolve("", './dist'), //默认'public'  作为静态资源服务的文件夹  (打包public文件夹会没有，里面得东西会直接编译在dist文件下)
+    // assetsInclude: resolve("", './src/assets'), // 静态资源处理
     plugins: [
-        commonjs(),
-        createVuePlugin(/* options */),
-        // 使vite可以使用required
-        requireTransform({
-            fileRegex:/.js$|.jsx$|.vue$/  // 使用正则表达式匹配需要作用的文件
-        }),
-        // vitePluginRequire({
-            // @fileRegex RegExp
-            // optional：default file processing rules are as follows
-            // 可选：默认文件处理规则如下
-            // fileRegex:/(.jsx?|.tsx?|.vue)$/
+        vue(),
+        // commonjs(),
+        // // 使vite可以使用required
+        // requireTransform({
+        //     fileRegex:/.js$|.jsx$|.vue$/  // 使用正则表达式匹配需要作用的文件
+        // }),
 
-            // Conversion mode. The default mode is import
-            // 转换模式。默认模式为导入
-            // importMetaUrl | import
-            // importMetaUrl see https://vitejs.cn/guide/assets.html#new-url-url-import-meta-url
-            // translateType: "importMetaUrl" | "import";
-            // translateType: "importMetaUrl",
-        // })
-        // vitePluginRequire.default({
-        //     translateType: "importMetaUrl",
-        // })
     ],
     /*****配置项目的构建过程******/
     build: {
         // transformMixedEsModules: true,
         outDir: 'dist', // 构建输出目录
-        minify: true, // 是否压缩代码
-        sourcemap: true, // 是否生成 source map
+        minify: false, // 是否压缩代码
+        sourcemap: false, // 是否生成 source map
         // rollupOptions: {
         //     output:{
         //         strict: false
@@ -102,4 +88,4 @@ export default {
             jsxInject: `import React from 'react'` //是否开启 JSX 转换
         },
     }
-}
+})
