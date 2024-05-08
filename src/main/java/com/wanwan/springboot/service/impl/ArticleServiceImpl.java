@@ -1,7 +1,6 @@
 package com.wanwan.springboot.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.wanwan.springboot.common.Result;
 import com.wanwan.springboot.entity.Article;
 import com.wanwan.springboot.entity.User;
 import com.wanwan.springboot.entity.UserArticleLike;
@@ -9,7 +8,7 @@ import com.wanwan.springboot.mapper.ArticleMapper;
 import com.wanwan.springboot.mapper.UserArticleLikeMapper;
 import com.wanwan.springboot.service.IArticleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wanwan.springboot.utils.TokenUtils;
+import com.wanwan.springboot.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,7 +29,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     UserArticleLikeMapper userArticleLikeMapper;
     @Override
     public void add(Article article) {
-        User currentUser = TokenUtils.getCurrentUser();
+        User currentUser = JWTUtils.getCurrentUser();
         article.setAuthorId(currentUser.getId());
         articleMapper.insert(article);
     }

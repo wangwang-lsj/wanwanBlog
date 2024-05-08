@@ -14,8 +14,11 @@ public enum ResultCodeEnum {
     // String CODE_600 = "600";    //其它业务异常
     SUCCESS("200", "成功"),
     PARAM_ERROR("400", "参数异常"),
-    TOKEN_INVALID_ERROR("401", "无token"),
-    TOKEN_CHECK_ERROR("401", "token验证失败，请重新登录"),
+    TOKEN_INVALID_ERROR("401", "token验证失败"),
+    TOKEN_EMPTY_ERROR("402", "token为空"),
+    TOKEN_EXPIRED_ERROR("403", "token过期"),
+    TOKEN_SIGNATURE_ERROR("404", "token签名无效"),
+    TOKEN_ALGORITHM_ERROR("405","token算法不匹配"),
     PARAM_LOST_ERROR("4001","参数缺失"),
     SYSTEM_ERROR("500", "系统异常"),
     USER_EXIT_ERROR("5001", "用户已存在"),

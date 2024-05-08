@@ -19,7 +19,7 @@ import java.util.List;
 public class GeneratorDataToWordUtil {
     public static final String driverUrl = "jdbc:mysql://127.0.0.1:3306/wanwan?useUnicode=true&characterEncoding=UTF-8&allowMultiQueries=true&zeroDateTimeBehavior=convertToNull&useSSL=false";
     public static final String username = "root";
-    public static final String password = "root";
+    public static final String password = "luoshujiang";
     /**
      * 导出数据库需要与driverUrl中连接的数据库一致
      */

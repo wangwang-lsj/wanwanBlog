@@ -221,7 +221,7 @@ export default {
       // console.log(scrollTop,clientHeight,scrollHeight)
       // console.log(scrollTop+clientHeight === scrollHeight)
       //如果满足公式则，确实到底了
-      if(scrollTop+clientHeight === scrollHeight-1){
+      if(scrollTop+clientHeight === scrollHeight){
         //发送异步请求请求数据，同时携带offset并自增offset
         //noMore是自定义变量，如果是最后一批数据则以后都不加载
         if(!this.noMore) {

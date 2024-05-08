@@ -1,27 +1,20 @@
 package com.wanwan.springboot.config.interceptor;
 
-import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.StrUtil;
-import com.alibaba.fastjson.JSON;
 import com.auth0.jwt.JWT;
-import com.auth0.jwt.JWTVerifier;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTDecodeException;
-import com.auth0.jwt.exceptions.JWTVerificationException;
-import com.wanwan.springboot.common.Constants;
+import com.auth0.jwt.exceptions.*;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.wanwan.springboot.common.enums.ResultCodeEnum;
 import com.wanwan.springboot.config.AuthAccess;
 import com.wanwan.springboot.entity.User;
 import com.wanwan.springboot.exception.ServiceException;
 import com.wanwan.springboot.service.IUserService;
-import com.wanwan.springboot.service.impl.UserServiceImpl;
 import com.wanwan.springboot.utils.RedisUtil;
+import com.wanwan.springboot.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -52,44 +45,42 @@ public class JwtInterceptor implements HandlerInterceptor {
             }
         }
 
-        // 执行认证
+        // 判断token是否为空
         if (StrUtil.isBlank(token)){
+            throw new ServiceException(ResultCodeEnum.TOKEN_EMPTY_ERROR);
+        }
+        // 验证token
+        try {
+            DecodedJWT decodedJWT = JWTUtils.getToken(token);
+            String userId = decodedJWT.getClaim("userId").asString();
+            User user;
+            if(RedisUtil.get("userId_"+userId,User.class)==null){
+                user = userService.getById(userId);
+                RedisUtil.put("userId_"+userId,user,24,TimeUnit.HOURS);
+            }else{
+                user = RedisUtil.get("userId_"+userId,User.class);
+            }
+            // 根据token中的userid查询数据库
+            if (user == null){
+                throw new ServiceException(ResultCodeEnum.USER_NO_EXIT_ERROR);
+
+            }
+            return true;
+        }catch (SignatureVerificationException e) {
+            e.printStackTrace();
+            throw new ServiceException(ResultCodeEnum.TOKEN_SIGNATURE_ERROR);
+        } catch (TokenExpiredException e) {
+            e.printStackTrace();
+            throw new ServiceException(ResultCodeEnum.TOKEN_EXPIRED_ERROR);
+        } catch (AlgorithmMismatchException e) {
+            e.printStackTrace();
+            throw new ServiceException(ResultCodeEnum.TOKEN_ALGORITHM_ERROR);
+        } catch (JWTVerificationException e) {
+            e.printStackTrace();
             throw new ServiceException(ResultCodeEnum.TOKEN_INVALID_ERROR);
         }
 
-        //获取token中的用户id
-        String userId;
-        try {
-            userId = JWT.decode(token).getAudience().get(0);
-        } catch (JWTDecodeException j) {
-            throw new ServiceException(ResultCodeEnum.TOKEN_CHECK_ERROR);
-        }
 
-        User user;
-        // String jsonStr = stringRedisTemplate.opsForValue().get("userId_"+userId);
-        if(RedisUtil.get("userId_"+userId,User.class)==null){
-            user = userService.getById(userId);
-            // stringRedisTemplate.opsForValue().set("userId_"+userId, JSON.toJSONString(user),8, TimeUnit.HOURS);
-            RedisUtil.put("userId_"+userId,user,24,TimeUnit.HOURS);
-        }else{
-            // user = JSON.parseObject(stringRedisTemplate.opsForValue().get("userId_" + userId), User.class);
-            user = RedisUtil.get("userId_"+userId,User.class);
-        }
-        // 根据token中的userid查询数据库
-        // User user = userService.getById(userId);
-        if (user == null){
-            throw new ServiceException(ResultCodeEnum.USER_NO_EXIT_ERROR);
-
-        }
-        //验证token
-        JWTVerifier jwtVerifier = JWT.require(Algorithm.HMAC256(user.getPassword())).build();
-        try {
-            jwtVerifier.verify(token);
-        } catch (JWTVerificationException e) {
-            throw new ServiceException(ResultCodeEnum.TOKEN_CHECK_ERROR);
-
-        }
-        return true;
     }
 
 

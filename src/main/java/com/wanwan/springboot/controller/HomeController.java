@@ -30,7 +30,6 @@ public class HomeController {
     @GetMapping("/slider")
     public Result getAll(@RequestHeader(name = "Wan-Source", required = false) String WanSource){
         QueryWrapper<Slideshow> queryWrapper = new QueryWrapper<>();
-        System.out.println(WanSource);
         if (Objects.equals(WanSource, "manage")) {
             queryWrapper.orderByAsc("sort_num");
             return Result.success(slideshowService.list(queryWrapper));

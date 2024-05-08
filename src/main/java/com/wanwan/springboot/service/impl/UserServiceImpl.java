@@ -2,10 +2,10 @@ package com.wanwan.springboot.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
-import cn.hutool.core.lang.TypeReference;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import cn.hutool.log.Log;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.wanwan.springboot.common.Constants;
 import com.wanwan.springboot.common.enums.ResultCodeEnum;
@@ -20,7 +20,9 @@ import com.wanwan.springboot.mapper.UserMapper;
 import com.wanwan.springboot.service.IMenuService;
 import com.wanwan.springboot.service.IUserService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.wanwan.springboot.utils.TokenUtils;
+import com.wanwan.springboot.utils.JWTUtils;
+import com.wanwan.springboot.utils.RedisUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -40,6 +43,7 @@ import java.util.stream.Collectors;
  * @author wanwan
  * @since 2024-01-22
  */
+@Slf4j
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
     private static final Log LOG = Log.get();
@@ -55,7 +59,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     private StringRedisTemplate stringRedisTemplate;
     @Override
     public UserDTO login(UserDTO userDTO) {
-
+        log.info("登录业务执行");
         User one = getUserInfo(userDTO);
         if(one != null){
             // 刷新上次登陆时间
@@ -63,7 +67,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             updateById(one);
 
             BeanUtil.copyProperties(one,userDTO,true);
-            String token = TokenUtils.genToken(one.getId().toString(), one.getPassword());
+            Map<String,String> map = new HashMap<>();
+            map.put("userId",one.getId().toString());
+            String token = JWTUtils.genToken(map);
             userDTO.setToken(token);
             userDTO.setPassword(null);
             String role = one.getRole();
@@ -93,7 +99,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public Map<String, Object> findByPageOrSearch(Integer pageNum, Integer pageSize, String username, String nickname, String address, String phone, String email) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         if(StrUtil.isNotBlank(username)||StrUtil.isNotBlank(nickname)||StrUtil.isNotBlank(address)||StrUtil.isNotBlank(phone)||StrUtil.isNotBlank(email)){
-            stringRedisTemplate.delete(Constants.USER_KEY);
+            RedisUtil.delete(Constants.USER_KEY);
         }
         if(!"".equals(username)){
             queryWrapper.like("username",username);
@@ -112,13 +118,11 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         }
         queryWrapper.orderByDesc("id");
         List<User> list;
-        String jsonStr = stringRedisTemplate.opsForValue().get(Constants.USER_KEY);
-        if(StrUtil.isBlank(jsonStr)){
-            list = list(queryWrapper);
-            stringRedisTemplate.opsForValue().set(Constants.USER_KEY, JSONUtil.toJsonStr(list));
+        if(RedisUtil.hasKey(Constants.USER_KEY)){
+             list = RedisUtil.get(Constants.USER_KEY,new TypeReference<List<User>>(){});
         }else {
-            list = JSONUtil.toBean(jsonStr, new TypeReference<List<User>>() {
-            },true);
+            list = list(queryWrapper);
+            RedisUtil.put(Constants.USER_KEY,list,24, TimeUnit.HOURS);
         }
         Map<String,Object> dataMap = new HashMap<>();
         // codeUseList：处理后的所有符合条件的数据（list）
