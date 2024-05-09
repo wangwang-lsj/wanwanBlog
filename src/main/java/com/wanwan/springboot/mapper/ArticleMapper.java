@@ -21,7 +21,7 @@ import java.util.List;
 public interface ArticleMapper extends BaseMapper<Article> {
     Page<Article> selectAllByPage(Page<Article> page, @Param("title") String title,@Param("description") String description,@Param("userName") String userName,@Param("categoryName") String categoryName, @Param("orderTarget") String orderTarget,@Param("order") String order);
 
-    Article getOneAllById(@Param("id")Integer id);
+    Article selectOneAllById(@Param("id")Integer id);
 
 
     @Update("update article set likes = likes + #{num} where id = #{id}")
@@ -31,5 +31,5 @@ public interface ArticleMapper extends BaseMapper<Article> {
     Boolean updateArticleReadCount(@Param("id")Integer id,@Param("num")Integer num);
 
 
-    List<Article> getHomeArticle();
+    List<Article> selectHomeArticle();
 }

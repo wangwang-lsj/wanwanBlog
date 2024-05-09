@@ -6,6 +6,7 @@ import com.wanwan.springboot.common.Result;
 import com.wanwan.springboot.config.AuthAccess;
 import com.wanwan.springboot.entity.Slideshow;
 import com.wanwan.springboot.mapper.SlideshowMapper;
+import com.wanwan.springboot.service.IArticleService;
 import com.wanwan.springboot.service.ISlideshowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -25,36 +26,37 @@ public class HomeController {
     @Resource
     ISlideshowService slideshowService;
     @Resource
-    SlideshowMapper slideshowMapper;
+    IArticleService articleService;
     @AuthAccess
     @GetMapping("/slider")
     public Result getAll(@RequestHeader(name = "Wan-Source", required = false) String WanSource){
         QueryWrapper<Slideshow> queryWrapper = new QueryWrapper<>();
         if (Objects.equals(WanSource, "manage")) {
-            queryWrapper.orderByAsc("sort_num");
-            return Result.success(slideshowService.list(queryWrapper));
+            return Result.success(slideshowService.sliderList());
         }
         queryWrapper.eq("enable", true);
-        return Result.success(slideshowService.list(queryWrapper));
+        return Result.success(slideshowService.enableSliderList());
+    }
+    @AuthAccess
+    @GetMapping("/articles")
+    public Result getHomeArticles(){
+        return Result.success(articleService.getHomeArticle());
     }
     @PostMapping("/slider")
     public Result saveOrUpdate(@RequestBody Slideshow slideshow){
-        return Result.success(slideshowService.saveOrUpdate(slideshow));
+        return Result.success(slideshowService.saveOrUpdateSlider(slideshow));
     }
     @DeleteMapping("/slider/{id}")
     public Result deleteById(@PathVariable Integer id){
-        return Result.success(slideshowService.removeById(id));
+        return Result.success(slideshowService.removeSliderById(id));
     }
     @DeleteMapping("/slider")
     public Result deleteBatch(@RequestBody List<Integer> ids){
-        return Result.success(slideshowService.removeBatchByIds(ids));
+        return Result.success(slideshowService.removeSliderByIds(ids));
     }
     @PatchMapping("/slider")
     public Result show(@RequestBody Slideshow slideshow){
-        UpdateWrapper<Slideshow> updateWrapper = new UpdateWrapper<>();
-        updateWrapper.eq("id", slideshow.getId());
-        updateWrapper.set("enable", slideshow.getEnable());
-        return Result.success(slideshowService.update(updateWrapper));
+        return Result.success(slideshowService.enableSlider(slideshow));
     }
 
 

@@ -39,7 +39,7 @@
         </if>
 
     </select>
-    <select id="getOneAllById" resultType="com.wanwan.springboot.entity.Article">
+    <select id="selectOneAllById" resultType="com.wanwan.springboot.entity.Article">
         SELECT
         a.*,c.name as categoryName,u.username as userName
         FROM article a
@@ -48,7 +48,7 @@
         where a.id = #{id}
     </select>
 
-    <select id="getHomeArticle" resultMap="ArticleMap">
+    <select id="selectHomeArticle" resultMap="ArticleMap">
         select
             a.*,c.name as categoryName
             from article a

@@ -83,11 +83,7 @@ public class ArticleController {
         return Result.success(articleService.getById(id));
     }
 
-    @AuthAccess
-    @GetMapping("/home")
-    public Result getByHomeShow(){
-        return Result.success(articleMapper.getHomeArticle());
-    }
+
     @AuthAccess
     @GetMapping("/{id}/all")
     public Result getOneAll(@PathVariable Integer id) {
@@ -125,7 +121,7 @@ public class ArticleController {
 
     @PostMapping()
     public Result create(@RequestBody Article article) {
-        articleService.add(article);
+        articleService.saveArticle(article);
         return Result.success();
     }
     @PutMapping("/likes")

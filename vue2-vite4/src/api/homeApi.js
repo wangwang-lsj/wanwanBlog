@@ -14,7 +14,16 @@ const homeApi = {
             }
         });
     },
-
+    /**
+     * 获取首页展示的文章
+     * @returns {*}
+     */
+    getHomeArticles(){
+        return request({
+            method: "GET",
+            url: "/home/articles"
+        })
+    },
     /**
      * 保存或更新轮播图
      * @param data

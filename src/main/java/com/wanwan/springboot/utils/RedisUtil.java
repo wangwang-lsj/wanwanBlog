@@ -51,6 +51,15 @@ public class RedisUtil {
     public static void putEightHours(String key, Object value) {
         redisTemplate.opsForValue().set(key, value == null ? "" : JSON.toJSONString(value, SerializerFeature.WriteMapNullValue), 8, TimeUnit.HOURS);
     }
+    /**
+     * 写入缓存 (24小时)
+     *
+     * @param key   键
+     * @param value 值
+     */
+    public static void put(String key, Object value) {
+        redisTemplate.opsForValue().set(key, value == null ? "" : JSON.toJSONString(value, SerializerFeature.WriteMapNullValue), 24, TimeUnit.HOURS);
+    }
 
     /**
      * 获取缓存

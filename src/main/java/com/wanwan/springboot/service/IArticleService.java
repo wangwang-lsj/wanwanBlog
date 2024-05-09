@@ -15,9 +15,11 @@ import java.util.List;
  */
 public interface IArticleService extends IService<Article> {
 
-    void add(Article article);
+    void saveArticle(Article article);
 
     Article getOneAllById(Integer id);
 
     void likeOrDislike(Integer articleId, Integer userId, Boolean isLike);
+
+    List<Article> getHomeArticle();
 }

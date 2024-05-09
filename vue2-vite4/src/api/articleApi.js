@@ -62,16 +62,7 @@ const articleApi = {
             url: "/articles/" + id,
         });
     },
-    /**
-     * 获取首页展示的文章
-     * @returns {*}
-     */
-    getByHomeShow(){
-        return request({
-            method: "GET",
-            url: "/articles/home"
-        })
-    },
+
     /**
      * 获取文章全量信息
      * @param {string} id - 文章ID

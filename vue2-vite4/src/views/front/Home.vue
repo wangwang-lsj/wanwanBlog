@@ -103,7 +103,7 @@ export default {
           this.images = res.data
         }
       })
-      articleApi.getByHomeShow().then(res=>{
+      homeApi.getHomeArticles().then(res=>{
         if(res.code === '200'){
           this.homeArticles = res.data
         }

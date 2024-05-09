@@ -13,6 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
+import java.util.List;
+
 /**
  * <p>
  * 文章(博客） 服务实现类
@@ -23,12 +26,12 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> implements IArticleService {
-    @Autowired
+    @Resource
     ArticleMapper articleMapper;
-    @Autowired
+    @Resource
     UserArticleLikeMapper userArticleLikeMapper;
     @Override
-    public void add(Article article) {
+    public void saveArticle(Article article) {
         User currentUser = JWTUtils.getCurrentUser();
         article.setAuthorId(currentUser.getId());
         articleMapper.insert(article);
@@ -36,7 +39,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public Article getOneAllById(Integer id) {
-        return articleMapper.getOneAllById(id);
+        return articleMapper.selectOneAllById(id);
     }
 
     @Transactional
@@ -55,5 +58,10 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             articleMapper.updateArticleLikes(articleId,+1);
             userArticleLikeMapper.insert(userArticleLike);
         }
+    }
+
+    @Override
+    public List<Article> getHomeArticle() {
+        return articleMapper.selectHomeArticle();
     }
 }
