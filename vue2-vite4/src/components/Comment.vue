@@ -220,7 +220,6 @@ export default {
         this.$message("请先登录")
         return
       }
-
       if (!content) {
         this.$message("评论不能为空")
         return

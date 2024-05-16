@@ -14,13 +14,13 @@ import java.util.List;
 */
 public interface ICommentService extends IService<Comment> {
 
-    CommentDTO addComment(Comment comment);
-    IPage<CommentDTO> getCommentListByPage(Integer pageNum, Integer pageSize,Integer articleId,Integer currentUserId);
+    CommentDTO saveComment(Comment comment);
+    IPage<CommentDTO> pageComment(Integer pageNum, Integer pageSize, Integer articleId, Integer currentUserId);
 
     void like(Integer commentId, Integer userId);
     void disLike(Integer commentId, Integer userId);
 
 
-    List<CommentDTO> getReplyListByPage(Integer commentId, Integer startIndex, Integer count,Integer currentUserId);
+    List<CommentDTO> pageSecondComment(Integer commentId, Integer startIndex, Integer count, Integer currentUserId);
 
 }

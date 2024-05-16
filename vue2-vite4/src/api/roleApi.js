@@ -100,17 +100,6 @@ const roleApi = {
             data: menusKeys
         });
     },
-
-    /**
-     * 删除redis缓存
-     * @returns {*}
-     */
-    reset() {
-        return request({
-            method: "DELETE",
-            url: "/role/reset"
-        });
-    }
 };
 
 export default roleApi;

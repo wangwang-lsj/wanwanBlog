@@ -28,7 +28,7 @@
       <el-table :data="tableData" :header-cell-class-name="'headerBg'" @selection-change="handleSelectionChange" border stripe>
         <el-table-column type="selection"></el-table-column>
         <el-table-column prop="id" label="ID" width="40"></el-table-column>
-        <el-table-column prop="userName" label="作者">
+        <el-table-column prop="userName" label="作者" width="80">
 
         </el-table-column>
         <el-table-column prop="title" label="标题">
@@ -58,8 +58,11 @@
 
         <el-table-column prop="cover" label="封面">
           <template v-slot="scope">
-            <el-image v-if="scope.row.cover" :src="scope.row.cover" :preview-src-list="[scope.row.cover]"></el-image>
-            <el-image v-else :src="require('@/assets/img/暂无图片.jpg')"></el-image>
+            <div style="display: flex;justify-content: center;align-items: center">
+              <el-image v-if="scope.row.cover" :src="scope.row.cover" :preview-src-list="[scope.row.cover]" style="height: 50px"></el-image>
+              <el-image v-else :src="require('@/assets/img/暂无图片.jpg')" style="height: 50px"></el-image>
+            </div>
+
           </template>
         </el-table-column>
 
@@ -252,19 +255,8 @@
           <el-button type="primary" @click="save">确 定</el-button>
         </div>
       </el-dialog>
-      <el-dialog title="文章信息" :visible.sync="viewDialogFormVisible">
+      <el-dialog title="文章信息" :visible.sync="viewDialogFormVisible" show-close>
         <WangEditor :content="this.content" :editable="false" v-if="viewDialogFormVisible"></WangEditor>
-        <!--<el-card>-->
-        <!--  <mavon-editor-->
-        <!--      class="md"-->
-        <!--      :value="this.content"-->
-        <!--      :subfield="false"-->
-        <!--      :default-open="'preview'"-->
-        <!--      :toolbarsFlag="false"-->
-        <!--      :editable="false"-->
-        <!--      :scroll-style="true"-->
-        <!--      :ishljs="true"/>-->
-        <!--</el-card>-->
       </el-dialog>
     </el-tab-pane>
     <el-tab-pane label="类别管理" name="second">
@@ -311,6 +303,7 @@ export default {
       tagsArr:[],
       content: '',
       reFresh:true,
+      wKey: 1,
     }
   },
   watch:{
@@ -331,6 +324,8 @@ export default {
         if (res.code === '200') {
           this.tableData = res.data.records
           this.total = res.data.total
+        }else {
+          this.$message.error(res.msg)
         }
       })
       categoryApi.getAll().then(res => {
@@ -351,6 +346,18 @@ export default {
       this.form = {}
       this.addDialogFormVisible = true
     },
+    handleEdit(row) {
+      this.tagsArr = JSON.parse(row.tags || '[]')
+      this.editDialogFormVisible = true
+      this.form = row
+    },
+    view(content) {
+      this.content = content
+      this.viewDialogFormVisible = true
+    },
+    reFreshKey(){
+      this.wKey++;
+    },
     add() {
       this.form.tags = JSON.stringify(this.tagsArr)
       articleApi.create(this.form).then(res => {
@@ -369,14 +376,10 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
-    handleEdit(row) {
-      this.tagsArr = JSON.parse(row.tags || '[]')
-      this.editDialogFormVisible = true
-      this.form = row
-    },
+
     save() {
       this.form.tags = JSON.stringify(this.tagsArr)
-      articleApi.save(this.form).then(res => {
+      articleApi.modify(this.form).then(res => {
         if (res.code === '200') {
           this.$message.success("保存成功");
           this.editDialogFormVisible = false
@@ -398,6 +401,10 @@ export default {
     },
     handleDeleteBatch() {
       let ids = this.multipleSelection.map(v => v.id)
+      if(ids.length === 0){
+        this.$message.error("请选择要删除的数据")
+        return
+      }
       articleApi.deleteBatch(ids).then(res => {
         if (res.code === '200') {
           this.$message.success("批量删除成功");
@@ -457,10 +464,7 @@ export default {
     //     $vm.$img2Url(pos, res.data);
     //   })
     // },
-    view(content) {
-      this.content = content
-      this.viewDialogFormVisible = true
-    },
+
     //获取到富文本编辑器的内容
     hChangeHtml(editDataHtml) {
       // console.log(editDataHtml);

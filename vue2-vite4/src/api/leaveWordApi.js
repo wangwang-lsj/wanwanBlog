@@ -15,28 +15,7 @@ const leaveWordApi = {
         });
     },
 
-    /**
-     * 获取所有留言
-     * @returns {*}
-     */
-    getAll() {
-        return request({
-            method: "GET",
-            url: "/leavewords"
-        });
-    },
 
-    /**
-     * 根据id获取留言
-     * @param id
-     * @returns {*}
-     */
-    getById(id) {
-        return request({
-            method: "GET",
-            url: "/leavewords/" + id
-        });
-    },
 
     /**
      * 发表留言

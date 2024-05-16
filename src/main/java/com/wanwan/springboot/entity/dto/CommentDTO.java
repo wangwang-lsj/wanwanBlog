@@ -1,5 +1,6 @@
 package com.wanwan.springboot.entity.dto;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import lombok.Data;
 
 import java.util.Date;
@@ -33,22 +34,16 @@ public class CommentDTO {
      */
     private Integer replyUserId;
 
-
-
     /**
      * 评论人id
      */
     private Integer userId;
-
     /**
      * 评论内容
      */
     private String commentContent;
 
-    /**
-     * 创建时间
-     */
-    private Date createTime;
+
 
     /**
      * 点赞量
@@ -60,5 +55,9 @@ public class CommentDTO {
 
     private String avatarUrl; // 用户头像地址
 
-
+    /**
+     * 创建时间
+     */
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
 }

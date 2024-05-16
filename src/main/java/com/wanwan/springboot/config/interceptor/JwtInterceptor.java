@@ -1,18 +1,17 @@
 package com.wanwan.springboot.config.interceptor;
 
 import cn.hutool.core.util.StrUtil;
-import com.auth0.jwt.JWT;
 import com.auth0.jwt.exceptions.*;
 import com.auth0.jwt.interfaces.DecodedJWT;
+import com.wanwan.springboot.common.Constants;
 import com.wanwan.springboot.common.enums.ResultCodeEnum;
-import com.wanwan.springboot.config.AuthAccess;
+import com.wanwan.springboot.annotation.AuthAccess;
 import com.wanwan.springboot.entity.User;
 import com.wanwan.springboot.exception.ServiceException;
 import com.wanwan.springboot.service.IUserService;
 import com.wanwan.springboot.utils.RedisUtil;
 import com.wanwan.springboot.utils.JWTUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
@@ -28,8 +27,6 @@ import java.util.concurrent.TimeUnit;
 public class JwtInterceptor implements HandlerInterceptor {
     @Autowired
     private IUserService userService;
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)  {
@@ -54,16 +51,15 @@ public class JwtInterceptor implements HandlerInterceptor {
             DecodedJWT decodedJWT = JWTUtils.getToken(token);
             String userId = decodedJWT.getClaim("userId").asString();
             User user;
-            if(RedisUtil.get("userId_"+userId,User.class)==null){
-                user = userService.getById(userId);
-                RedisUtil.put("userId_"+userId,user,24,TimeUnit.HOURS);
+            if(RedisUtil.hasKey(Constants.USER_ID+userId)){
+                user = RedisUtil.get(Constants.USER_ID+userId,User.class);
             }else{
-                user = RedisUtil.get("userId_"+userId,User.class);
+                user = userService.getById(userId);
+                RedisUtil.put(Constants.USER_ID+userId,user,24,TimeUnit.HOURS);
             }
             // 根据token中的userid查询数据库
             if (user == null){
                 throw new ServiceException(ResultCodeEnum.USER_NO_EXIT_ERROR);
-
             }
             return true;
         }catch (SignatureVerificationException e) {

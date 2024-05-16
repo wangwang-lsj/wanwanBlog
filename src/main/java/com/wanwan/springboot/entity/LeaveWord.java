@@ -1,5 +1,6 @@
 package com.wanwan.springboot.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -11,6 +12,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 /**
  * <p>
@@ -54,10 +56,10 @@ public class LeaveWord implements Serializable {
 
     @ApiModelProperty("是否展示")
     private Boolean enable;
-
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("回复时间")
     private Date replyTime;
-
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     @ApiModelProperty("创建时间")
     private Date createTime;
 }

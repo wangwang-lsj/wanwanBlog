@@ -1,7 +1,5 @@
 package com.wanwan.springboot.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.wanwan.springboot.entity.Slideshow;
 
@@ -14,16 +12,16 @@ import java.util.List;
 */
 public interface ISlideshowService extends IService<Slideshow> {
 
-    List<Slideshow> sliderList();
+    List<Slideshow> listSlider();
 
-    List<Slideshow> enableSliderList();
+    List<Slideshow> listEnableSlider();
 
     Boolean saveOrUpdateSlider(Slideshow slideshow);
 
-    Boolean removeSliderById(Integer id);
+    Boolean removeSlider(Integer id);
 
-    Boolean removeSliderByIds(List<Integer> ids);
+    Boolean removeSliders(List<Integer> ids);
 
-    Boolean enableSlider(Slideshow slideshow);
+    Boolean updateSliderEnable(Slideshow slideshow);
 
 }

@@ -5,6 +5,7 @@ import com.wanwan.springboot.entity.LeaveWord;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -17,5 +18,17 @@ import java.util.List;
 public interface ILeaveWordService extends IService<LeaveWord> {
 
 
-    List<LeaveWord> getByPage(Page<LeaveWord> page,String nickName,Integer enable);
+    Map<String,Object> pageLeaveWord(Integer pageNum,Integer pageSize,String nickName, Integer enable);
+    Map<String,Object> pageAbleLeaveWord(Integer pageNum,Integer pageSize, String nickName, Integer enable);
+
+
+    boolean saveLeaveWord(LeaveWord leaveWord);
+
+    boolean reply(LeaveWord leaveWord);
+
+    boolean removeLeaveWord(Integer id);
+
+    boolean removeLeaveWords(List<Integer> ids);
+
+    boolean updateShow(LeaveWord leaveWord);
 }

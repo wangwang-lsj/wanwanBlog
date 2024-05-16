@@ -19,17 +19,17 @@ import java.util.List;
  */
 @Mapper
 public interface ArticleMapper extends BaseMapper<Article> {
-    Page<Article> selectAllByPage(Page<Article> page, @Param("title") String title,@Param("description") String description,@Param("userName") String userName,@Param("categoryName") String categoryName, @Param("orderTarget") String orderTarget,@Param("order") String order);
+    Page<Article> selectArticlePageByCondition(Page<Article> page, @Param("title") String title, @Param("description") String description, @Param("userName") String userName, @Param("categoryName") String categoryName, @Param("orderTarget") String orderTarget, @Param("order") String order);
 
-    Article selectOneAllById(@Param("id")Integer id);
+    Article selectArticleById(@Param("id")Integer id);
 
 
     @Update("update article set likes = likes + #{num} where id = #{id}")
-    Boolean updateArticleLikes(@Param("id")Integer id,@Param("num")Integer num);
+    void updateArticleLikesById(@Param("id")Integer id, @Param("num")Integer num);
 
     @Update("update article set read_count = read_count + #{num} where id = #{id}")
-    Boolean updateArticleReadCount(@Param("id")Integer id,@Param("num")Integer num);
+    void updateArticleReadCountById(@Param("id")Integer id, @Param("num")Integer num);
 
 
-    List<Article> selectHomeArticle();
+    List<Article> selectArticleByHomeShow();
 }

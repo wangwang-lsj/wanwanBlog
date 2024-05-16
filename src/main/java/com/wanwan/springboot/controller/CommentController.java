@@ -1,9 +1,8 @@
 package com.wanwan.springboot.controller;
 
 import com.wanwan.springboot.common.Result;
-import com.wanwan.springboot.config.AuthAccess;
+import com.wanwan.springboot.annotation.AuthAccess;
 import com.wanwan.springboot.entity.Comment;
-import com.wanwan.springboot.entity.dto.CommentDTO;
 import com.wanwan.springboot.mapper.CommentMapper;
 import com.wanwan.springboot.service.ICommentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class CommentController {
                                  @RequestParam Integer currentUserId
     ){
 
-        return Result.success(commentService.getCommentListByPage(pageNum,pageSize,articleId,currentUserId));
+        return Result.success(commentService.pageComment(pageNum,pageSize,articleId,currentUserId));
     }
     @AuthAccess
     @GetMapping("/replies")
@@ -39,17 +38,17 @@ public class CommentController {
                              @RequestParam Integer startIndex,
                              @RequestParam Integer count,
                              @RequestParam Integer currentUserId) {
-        return Result.success(commentService.getReplyListByPage(commentId, startIndex,count,currentUserId));
+        return Result.success(commentService.pageSecondComment(commentId, startIndex,count,currentUserId));
     }
     @AuthAccess
     @GetMapping("/{articleId}")
     public Result getCountByArticleId(@PathVariable Integer articleId){
-        return Result.success(commentMapper.getCountByArticleId(articleId));
+        return Result.success(commentMapper.selectCommentCountByArticleId(articleId));
     }
 
     @PostMapping()
     public Result addComment(@RequestBody Comment comment) {
-        return Result.success(commentService.addComment(comment));
+        return Result.success(commentService.saveComment(comment));
     }
 
 

@@ -128,6 +128,8 @@ export default {
         if(res.code==='200'){
           this.tableData = res.data
           this.total = res.data.total
+        }else {
+          this.$message.error(res.msg)
         }
       })
     },
@@ -176,6 +178,10 @@ export default {
     },
     handleDeleteBatch(){
       let ids = this.multipleSelection.map(v => v.id)
+      if(ids.length === 0){
+        this.$message.error("请选择要删除的数据")
+        return
+      }
       menuApi.deleteBatch(ids).then(res=>{
         if (res.code === '200'){
           this.$message.success("批量删除成功");

@@ -40,16 +40,6 @@ const articleApi = {
         });
     },
 
-    /**
-     * 获取所有文章
-     * @returns {Promise}
-     */
-    getAll() {
-        return request({
-            method: "GET",
-            url: "/articles",
-        });
-    },
 
     /**
      * 根据ID获取文章详情
@@ -103,7 +93,7 @@ const articleApi = {
      * 更新文章
      * @returns {Promise}
      */
-    save(data) {
+    modify(data) {
         return request({
             method: "PUT",
             url: "/articles",

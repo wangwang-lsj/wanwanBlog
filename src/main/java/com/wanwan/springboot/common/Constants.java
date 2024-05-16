@@ -9,8 +9,23 @@ public interface Constants {
 
     String DICT_TYPE_ICON = "icon";    //
     String ECHARTS_DATA_KEY = "ECHARTS_DATA_KEY";
-    String FILE_KEY = "FILE_KEY";
-    String USER_KEY = "USER_KEY";
-    String ROLE_KEY = "ROLE_KEY";
+
+    // homeKey
+    String HOME = "home";
+    String HOME_ARTICLES = "home:articles";
+    String HOME_SLIDER = "home:slider";
+    // articleKey
+    String ARTICLE = "article";
+    String ARTICLE_ARTICLES = "article:articles";
+
+    String ARTICLE_ID = "article:";
+    String ARTICLE_HOTS = "article:hots";
+
+    // leaveWordKey
+    String LEAVEWORD = "leaveword";
+    String LEAVEWORD_LEAVEWORD = "leaveword:leaveword";
+    // userKey
+    String USER_USERS = "user:users";
+    String USER_ID = "user:";
 
 }

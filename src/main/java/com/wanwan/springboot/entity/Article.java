@@ -1,5 +1,6 @@
 package com.wanwan.springboot.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -49,12 +50,6 @@ public class Article implements Serializable {
     @ApiModelProperty("作者ID")
     private Integer authorId;
 
-    @ApiModelProperty("发布日期")
-    private Date publicDate;
-
-    @ApiModelProperty("更新日期")
-    private Date updateDate;
-
     @ApiModelProperty("浏览量")
     private Integer readCount;
 
@@ -76,4 +71,11 @@ public class Article implements Serializable {
     @TableField(exist = false)
     @ApiModelProperty("评论数量")
     private Integer commentCount;
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty("发布日期")
+    private Date publicDate;
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    @ApiModelProperty("更新日期")
+    private Date updateDate;
+
 }

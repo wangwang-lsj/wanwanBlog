@@ -19,5 +19,5 @@ import java.util.List;
 @Mapper
 public interface LeaveWordMapper extends BaseMapper<LeaveWord> {
 
-    List<LeaveWord> getByPage(@Param("page") Page<LeaveWord> page,@Param("nickName") String nickName,@Param("enable")Integer enable);
+    List<LeaveWord> selectLWPageByCondition(@Param("page") Page<LeaveWord> page, @Param("nickName") String nickName, @Param("enable")Integer enable);
 }

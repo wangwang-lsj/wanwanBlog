@@ -23,5 +23,5 @@ public interface IUserService extends IService<User> {
 
     void updatePassword(UserPasswordDTO userPasswordDTO);
 
-    Map<String,Object> findByPageOrSearch(Integer pageNum, Integer pageSize, String username, String nickname, String address, String phone, String email);
+    Map<String,Object> pageUserByCondition(Integer pageNum, Integer pageSize, String username, String nickname, String address, String phone, String email);
 }

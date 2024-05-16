@@ -1,5 +1,6 @@
 package com.wanwan.springboot.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -25,5 +26,6 @@ public class Files {
     private String md5;
     private Boolean isDelete;
     private Boolean enable;
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
 }

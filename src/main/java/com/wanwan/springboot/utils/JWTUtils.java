@@ -8,6 +8,7 @@ import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.wanwan.springboot.entity.User;
 import com.wanwan.springboot.service.IUserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -24,6 +25,7 @@ import java.util.Map;
  * @since：2024/2/2 11:00
  * @description:
  */
+@Slf4j
 @Component
 public class JWTUtils {
     private static String SIGNATURE;
@@ -89,8 +91,9 @@ public class JWTUtils {
         try {
             HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
             String token = request.getHeader("token");
+            DecodedJWT decode = JWT.decode(token);
             if(StrUtil.isNotBlank(token)) {
-                String userId = JWT.decode(token).getAudience().get(0);
+                String userId = decode.getClaim("userId").asString();
                 return staticUserService.getById(Integer.valueOf(userId));
             }
         }catch (Exception e){

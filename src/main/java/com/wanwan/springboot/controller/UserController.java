@@ -8,10 +8,9 @@ import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.wanwan.springboot.common.Constants;
 import com.wanwan.springboot.common.Result;
 import com.wanwan.springboot.common.enums.ResultCodeEnum;
-import com.wanwan.springboot.config.AuthAccess;
+import com.wanwan.springboot.annotation.AuthAccess;
 import com.wanwan.springboot.entity.User;
 import com.wanwan.springboot.entity.dto.UserDTO;
 import com.wanwan.springboot.entity.dto.UserPasswordDTO;
@@ -99,7 +98,7 @@ public class UserController {
                        @RequestParam(defaultValue = "") String phone,
                        @RequestParam(defaultValue = "") String email
     ) {
-        return Result.success(userService.findByPageOrSearch(pageNum, pageSize, username, nickname, address, phone, email));
+        return Result.success(userService.pageUserByCondition(pageNum, pageSize, username, nickname, address, phone, email));
     }
 
     /**
@@ -109,7 +108,6 @@ public class UserController {
      */
     @PostMapping("/users")
     public Result saveOrUpdate(@RequestBody User user) {
-        stringRedisTemplate.delete(Constants.USER_KEY);
         return Result.success(userService.saveOrUpdate(user));
     }
 
@@ -120,7 +118,6 @@ public class UserController {
      */
     @DeleteMapping("/users/{id}")
     public Result deleteById(@PathVariable Integer id) {
-        stringRedisTemplate.delete(Constants.USER_KEY);
         return Result.success(userService.removeById(id));
     }
 
@@ -131,7 +128,6 @@ public class UserController {
      */
     @DeleteMapping("/users")
     public Result deleteBatch(@RequestBody List<Integer> ids) {
-        stringRedisTemplate.delete(Constants.USER_KEY);
         return Result.success(userService.removeBatchByIds(ids));
     }
 
@@ -174,14 +170,6 @@ public class UserController {
     //     return Result.success(userService.list(queryWrapper));
     // }
 
-    /**
-     * 重置redis缓存
-     * @return Boolean
-     */
-    @DeleteMapping("/users/reset")
-    public Result reset() {
-        return Result.success(stringRedisTemplate.delete(Constants.USER_KEY));
-    }
 
     /**
      * 导出用户表为excel
@@ -241,7 +229,6 @@ public class UserController {
             user.setAvatarUrl(list.get(6).toString());
             userList.add(user);
         }
-        stringRedisTemplate.delete(Constants.USER_KEY);
         return Result.success(userService.saveBatch(userList));
     }
 

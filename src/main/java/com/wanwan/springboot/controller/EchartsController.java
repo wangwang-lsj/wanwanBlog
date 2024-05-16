@@ -8,7 +8,7 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.wanwan.springboot.common.Constants;
 import com.wanwan.springboot.common.Result;
-import com.wanwan.springboot.config.AuthAccess;
+import com.wanwan.springboot.annotation.AuthAccess;
 import com.wanwan.springboot.entity.User;
 import com.wanwan.springboot.service.IArticleService;
 import com.wanwan.springboot.service.ICommentService;

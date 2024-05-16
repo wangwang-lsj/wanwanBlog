@@ -64,20 +64,30 @@
               </div>
             </div>
             <el-dropdown-menu v-slot="dropdown" style="width: 100px; text-align: center;">
-              <el-dropdown-item style="font-size: 14px; padding: 5px 0" v-if="user.role==='ADMIN'">
-                <router-link to="/manage/backhome">前往后台</router-link>
-              </el-dropdown-item>
+              <router-link to="/manage/backhome">
+                <el-dropdown-item style="font-size: 14px; padding: 5px 0" v-if="user.role==='ADMIN'">
+                  前往后台
+                </el-dropdown-item>
+              </router-link>
+
+
               <!--<el-dropdown-item style="font-size: 14px; padding: 5px 0">-->
               <!--  <router-link to="/person">个人中心</router-link>-->
               <!--</el-dropdown-item>-->
-              <el-dropdown-item style="font-size: 14px; padding: 5px 0">
-                <span @click="logout()" style="text-decoration: none">退出</span>
-              </el-dropdown-item>
+              <span @click="logout()" style="text-decoration: none">
+                <el-dropdown-item style="font-size: 14px; padding: 5px 0">
+                  退出
+                </el-dropdown-item>
+              </span>
             </el-dropdown-menu>
           </el-dropdown>
-          <div v-else style="width: 100px;height: 100% ;cursor: pointer; text-align: center;float: right">
-            <router-link to="/login">登陆</router-link>
-          </div>
+          <router-link to="/login" v-else>
+            <div style="width: 100px;height: 100% ;cursor: pointer; text-align: center;float: right">
+              登陆
+            </div>
+          </router-link>
+
+
         </div>
       </div>
     </div>

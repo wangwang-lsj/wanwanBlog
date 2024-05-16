@@ -5,9 +5,7 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wanwan.springboot.common.Result;
-import com.wanwan.springboot.config.AuthAccess;
-import com.wanwan.springboot.entity.dto.MyRequestBody;
-import javafx.beans.DefaultProperty;
+import com.wanwan.springboot.annotation.AuthAccess;
 import org.springframework.web.bind.annotation.*;
 
 import com.wanwan.springboot.service.ICategoryService;

@@ -188,6 +188,8 @@ export default {
     echartsApi.statistics().then(res=>{
       if (res.code === '200'){
         this.statistics = res.data
+      }else {
+        this.$message.error(res.msg)
       }
     })
   },

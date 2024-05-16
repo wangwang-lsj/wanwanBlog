@@ -15,5 +15,5 @@ import java.util.List;
  */
 public interface IMenuService extends IService<Menu> {
 
-    List<Menu> selectMenus(String name);
+    List<Menu> listMenu(String name);
 }

@@ -23,17 +23,17 @@
         <result property="id" column="id"/>
 
         <association property="replyTotalCount" javaType="java.lang.Integer"
-                     select="selectReplyTotalCount" column="id"/>
+                     select="selectReplyCount" column="id"/>
         <association property="isLike" javaType="java.lang.Boolean"
-                     select="selectUserCommentLike" column="{commentId=id,userId=currentUserId}"/>
+                     select="selectLikeByCommentIdAndUserId" column="{commentId=id,userId=currentUserId}"/>
 
         <collection property="children" ofType="com.wanwan.springboot.entity.dto.CommentDTO"
-                    select="queryChildrenByPage" column="{commentId=id,startIndex=startIndex,count=count,currentUserId=currentUserId}"/>
+                    select="selectCommentPageByCommentId" column="{commentId=id,startIndex=startIndex,count=count,currentUserId=currentUserId}"/>
 
     </resultMap>
     <resultMap id="SecondCommentDTOMap" type="com.wanwan.springboot.entity.dto.CommentDTO">
         <association property="isLike" javaType="java.lang.Boolean"
-                     select="selectUserCommentLike" column="{commentId=id,userId=currentUserId}"/>
+                     select="selectLikeByCommentIdAndUserId" column="{commentId=id,userId=currentUserId}"/>
     </resultMap>
     <select id="selectCommentCount" resultType="int">
         <include refid="selectCommentCountSql"/>
@@ -41,14 +41,15 @@
     <sql id="selectCommentCountSql">
         select count(*) from comment c where c.article_id = #{id}
     </sql>
-    <select id="selectReplyTotalCount" resultType="int">
-        <include refid="selectReplyTotalCountSql"/>
+
+    <select id="selectReplyCount" resultType="int">
+        <include refid="selectReplyCountSql"/>
     </select>
-    <sql id="selectReplyTotalCountSql">
+    <sql id="selectReplyCountSql">
         select count(*) from comment c where c.parent_id = #{id}
     </sql>
     <!--查询一级评论-->
-    <select id="queryPage" resultMap="commentDTOMap">
+    <select id="selectCommentPageByArticleId" resultMap="commentDTOMap">
         SELECT  c.id, parent_id, reply_user_id, user_id, comment_content, c.create_time, like_num ,u.avatar_url,
                 c.reply_comment_id,
                 u.nickname , u2.nickname as reply_user_nickname,0 as startIndex, 3 as `count`,#{currentUserId} as currentUserId
@@ -61,7 +62,7 @@
             by c.create_time DESC
     </select>
     <!--查询二级评论-->
-    <select id="queryChildrenByPage" resultMap="SecondCommentDTOMap">
+    <select id="selectCommentPageByCommentId" resultMap="SecondCommentDTOMap">
         SELECT  c.id, parent_id, reply_user_id, user_id, comment_content, c.create_time, like_num,
                 c.reply_comment_id,
                 u.nickname , u2.nickname as reply_user_nickname,u.avatar_url, #{currentUserId} as currentUserId
@@ -75,7 +76,7 @@
 
     </select>
 
-    <select id="getSingleComment" resultType="com.wanwan.springboot.entity.dto.CommentDTO">
+    <select id="selectCommentById" resultType="com.wanwan.springboot.entity.dto.CommentDTO">
         SELECT  c.id, parent_id, reply_user_id, user_id, comment_content, c.create_time, like_num ,u.avatar_url,
                 c.reply_comment_id,
                 u.nickname , u2.nickname as reply_user_nickname
@@ -87,30 +88,21 @@
 
     </select>
 
-    <select id="selectUserCommentLike" resultType="java.lang.Boolean">
+    <select id="selectLikeByCommentIdAndUserId" resultType="java.lang.Boolean">
         select count(*) from user_comment_like where comment_id = ${commentId} and user_id = ${userId}
     </select>
 
-
-
-
-    <select id="isLike" resultType="java.lang.Boolean">
-        select count(*) from comment_like where comment_id = #{commentId} and user_id = #{userId}
-    </select>
-    <select id="getCountByArticleId" resultType="java.lang.Integer">
+    <select id="selectCommentCountByArticleId" resultType="java.lang.Integer">
         select count(*) from comment where article_id = #{articleId}
     </select>
-    <insert id="like">
+    <insert id="insertLikeByCommentIdAndUserId">
         insert into user_comment_like(user_id,comment_id) values(#{userId},#{commentId})
     </insert>
-    <delete id="disLike">
+    <delete id="deleteLikeByCommentIdAndUserId">
         delete from user_comment_like where user_id=#{userId} and comment_id=#{commentId}
     </delete>
-    <update id="commentLike">
-        update comment set like_num=like_num+1 where id=#{commentId}
-    </update>
-    <update id="commentDisLike">
-        update comment set like_num=like_num-1 where id=#{commentId}
+    <update id="updateCommentLikeById">
+        update comment set like_num=like_num+#{num} where id=#{commentId}
     </update>
 
 

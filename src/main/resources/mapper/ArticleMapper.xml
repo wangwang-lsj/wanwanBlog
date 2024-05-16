@@ -13,7 +13,7 @@
                      select="selectCommentCount" column="id"/>
     </resultMap>
 
-    <select id="selectAllByPage" resultMap="ArticleMap">
+    <select id="selectArticlePageByCondition" resultMap="ArticleMap">
         SELECT
         a.*,c.name as categoryName,u.username as userName
         FROM article a
@@ -39,7 +39,7 @@
         </if>
 
     </select>
-    <select id="selectOneAllById" resultType="com.wanwan.springboot.entity.Article">
+    <select id="selectArticleById" resultType="com.wanwan.springboot.entity.Article">
         SELECT
         a.*,c.name as categoryName,u.username as userName
         FROM article a
@@ -48,7 +48,7 @@
         where a.id = #{id}
     </select>
 
-    <select id="selectHomeArticle" resultMap="ArticleMap">
+    <select id="selectArticleByHomeShow" resultMap="ArticleMap">
         select
             a.*,c.name as categoryName
             from article a

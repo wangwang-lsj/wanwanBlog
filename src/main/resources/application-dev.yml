@@ -58,7 +58,7 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 files:
   upload:
-    path: D:/IdeaProjects/小白做毕设2024/files/
+    path: D:/IdeaProjects/玩玩小站/files/
 jwt:
   signature: wanwan
   expire: 24

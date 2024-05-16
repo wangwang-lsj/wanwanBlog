@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanwan.springboot.mapper.LeaveWordMapper">
 
-    <select id="getByPage" resultType="com.wanwan.springboot.entity.LeaveWord">
+    <select id="selectLWPageByCondition" resultType="com.wanwan.springboot.entity.LeaveWord">
         SELECT lw.*,u.nickname as replyUserName
         from leave_word lw
             LEFT JOIN user u on lw.reply_user_id=u.id

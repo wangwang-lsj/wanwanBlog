@@ -1,18 +1,33 @@
 package com.wanwan.springboot;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.TypeReference;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wanwan.springboot.common.Constants;
 import com.wanwan.springboot.common.enums.ResultCodeEnum;
+import com.wanwan.springboot.entity.LeaveWord;
 import com.wanwan.springboot.entity.Menu;
 import com.wanwan.springboot.entity.TestModel;
-import com.wanwan.springboot.mapper.MenuMapper;
-import com.wanwan.springboot.mapper.TestMapper;
-import com.wanwan.springboot.mapper.UserMapper;
+import com.wanwan.springboot.mapper.*;
+import com.wanwan.springboot.service.impl.LeaveWordServiceImpl;
 import com.wanwan.springboot.service.impl.MenuServiceImpl;
+import com.wanwan.springboot.utils.RedisUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+@Slf4j
 @SpringBootTest
 class SpringbootApplicationTests {
     @Value("${spring.datasource.url}")
@@ -21,6 +36,16 @@ class SpringbootApplicationTests {
     private TestMapper testMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private CommentMapper commentMapper;
+    @Autowired
+    private LeaveWordServiceImpl leaveWordService;
+    @Autowired
+    private LeaveWordMapper leaveWordMapper;
+    @Autowired
+    private RedisTemplate<String, String> redisTemplate;
+    @Autowired
+    private StringRedisTemplate stringRedisTemplate;
     @Test
     void contextLoads() {
         System.out.println(url);
@@ -29,7 +54,7 @@ class SpringbootApplicationTests {
     private MenuMapper menuMapper;
     @Test
     void contextLoads1() {
-        System.out.println(menuMapper.selectAllBySortNum());
+        System.out.println(menuMapper.selectMenu());
     }
     @Autowired
     private MenuServiceImpl menuService;
@@ -62,6 +87,57 @@ class SpringbootApplicationTests {
     }
     @Test
     void testSelect(){
-        System.out.println(userMapper.getOneAll("wanwan","admin"));
+        System.out.println(userMapper.selectUserAllByUN("wanwan","admin"));
+    }
+    @Test
+    void testUpdateCommentLike(){
+        commentMapper.updateCommentLikeById(69,-1);
+    }
+    @Test
+    void testRedisTemplate(){
+        redisTemplate.opsForValue().set("name","罗书江");
+    }
+    @Test
+    void testStringRedisTemplate(){
+        Object obj = stringRedisTemplate.opsForValue().get("USER_KEY");
+        log.info("obj:"+obj.toString());
+        log.info("list:"+JSON.parseArray(obj.toString()));
+        // stringRedisTemplate.opsForValue().set("name","罗书江");
+    }
+    @Test
+    void testSRTMap() throws JsonProcessingException {
+        Map<String,Object> map = new HashMap<>();
+        ObjectMapper objectMapper = new ObjectMapper();
+        // map.put("records", objectMapper.writeValueAsString(leaveWordMapper.selectList(new QueryWrapper<>())));
+        // map.put("total", String.valueOf(leaveWordService.count()));
+        // RedisUtil.hPutAll(Constants.LEAVEWORD_LEAVEWORDS,map);
+
+        // map.put("records", leaveWordMapper.selectList(new QueryWrapper<>()).toString());
+        // map.put("total", String.valueOf(leaveWordService.count()));
+        // RedisUtil.hPutAll("test",map);
+
+        // map.put("records", leaveWordMapper.selectList(new QueryWrapper<>()));
+        // map.put("total", leaveWordService.count());
+        // RedisUtil.put("test",map);
+
+        // map = RedisUtil.hGetAll(Constants.LEAVEWORD_LEAVEWORDS,new TypeReference<Object>(){});
+        // Object records = map.get("records");
+        // Object total = map.get("total");
+        // Long total1 = JSON.parseObject(total.toString(),Long.class);
+        // List<LeaveWord> leaveWords = JSON.parseArray(records.toString(),LeaveWord.class);
+        // for (LeaveWord leaveWord : leaveWords){
+        //     System.out.println(leaveWord.getContent());
+        // }
+
+        // HashMap<String, Object> hashMap = RedisUtil.get("test", new TypeReference<HashMap<String, Object>>() {});
+        // Object records = hashMap.get("records");
+        // for (LeaveWord record : records){
+        //
+        // }
+        // RedisUtil.expire(Constants.LEAVEWORD_LEAVEWORDS,24, TimeUnit.HOURS);
+        // RedisUtil.hPutAll(Constants.LEAVEWORD_LEAVEWORDS,map);
+        Long num = RedisUtil.deletePrefix(Constants.LEAVEWORD);
+        log.info(String.valueOf(num));
+
     }
 }

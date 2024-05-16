@@ -106,17 +106,6 @@ const userApi = {
     },
 
     /**
-     * 重置redis缓存
-     * @returns {*}
-     */
-    reset() {
-        return request({
-            method: "DELETE",
-            url: "/users/reset"
-        });
-    },
-
-    /**
      * 导出excel
      */
     exportExcel() {

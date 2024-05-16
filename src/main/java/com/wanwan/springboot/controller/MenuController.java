@@ -2,14 +2,11 @@ package com.wanwan.springboot.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wanwan.springboot.common.Constants;
 import com.wanwan.springboot.common.Result;
 import com.wanwan.springboot.entity.Dict;
 import com.wanwan.springboot.mapper.DictMapper;
 import com.wanwan.springboot.mapper.MenuMapper;
-import com.wanwan.springboot.service.IUserService;
 import com.wanwan.springboot.service.impl.UserServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +15,6 @@ import com.wanwan.springboot.entity.Menu;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -73,7 +69,7 @@ public class MenuController {
      */
     @GetMapping("/menus")
     public Result getByName(@RequestParam(defaultValue = "") String name) {
-        return Result.success(menuService.selectMenus(name));
+        return Result.success(menuService.listMenu(name));
     }
 
     /**

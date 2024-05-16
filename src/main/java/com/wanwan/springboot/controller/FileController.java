@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wanwan.springboot.common.Result;
-import com.wanwan.springboot.config.AuthAccess;
+import com.wanwan.springboot.annotation.AuthAccess;
 import com.wanwan.springboot.entity.Files;
 import com.wanwan.springboot.mapper.FileMapper;
 import org.springframework.beans.factory.annotation.Value;

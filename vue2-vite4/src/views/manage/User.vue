@@ -151,6 +151,8 @@ export default {
         if(res.code==='200'){
           this.tableData = res.data.records
           this.total = res.data.total
+        }else {
+          this.$message.error(res.msg)
         }
       }).catch((error)=>{
         console.log(error)
@@ -169,9 +171,7 @@ export default {
       this.email=""
       this.phone=""
       this.address=""
-      userApi.reset()
       this.load()
-
     },
     handleSizeChange(pageSize) {
       this.pageSize=pageSize
@@ -217,6 +217,10 @@ export default {
     },
     handleDeleteBatch(){
       let ids = this.multipleSelection.map(v => v.id)
+      if(ids.length === 0){
+        this.$message.error("请选择要删除的数据")
+        return
+      }
       userApi.deleteBatch(ids).then(res=>{
         if (res.code === '200'){
           this.$message.success("批量删除成功");

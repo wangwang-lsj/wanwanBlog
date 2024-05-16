@@ -1,4 +1,4 @@
-package com.wanwan.springboot.config;
+package com.wanwan.springboot.annotation;
 
 import java.lang.annotation.*;
 

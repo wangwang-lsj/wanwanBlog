@@ -1,5 +1,6 @@
 package com.wanwan.springboot.entity;
 
+import com.alibaba.fastjson.annotation.JSONField;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
@@ -26,11 +27,12 @@ public class Comment implements Serializable {
 
     private String commentContent;
 
-    private Date createTime;
+
 
     private Integer likeNum;
 
     private Integer articleId;
 
-    private static final long serialVersionUID = 1L;
+    @JSONField(format = "yyyy-MM-dd HH:mm:ss")
+    private Date createTime;
 }

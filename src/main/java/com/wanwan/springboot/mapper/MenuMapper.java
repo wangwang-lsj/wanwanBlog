@@ -18,6 +18,6 @@ import java.util.List;
 @Mapper
 public interface MenuMapper extends BaseMapper<Menu> {
     @Select("SELECT id,name,path,icon,description,sort_num,pid,page_path FROM menu ORDER BY sort_num ASC")
-    List<Menu> selectAllBySortNum();
+    List<Menu> selectMenu();
 
 }

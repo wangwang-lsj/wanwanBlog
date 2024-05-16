@@ -98,6 +98,8 @@ export default {
         if(res.code=== '200'){
           this.tableData = res.data.records
           this.total = res.data.total
+        }else {
+          this.$message.error(res.msg)
         }
       })
     },

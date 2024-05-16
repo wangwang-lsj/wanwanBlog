@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IMenuService {
     @Override
-    public List<Menu> selectMenus(String name) {
+    public List<Menu> listMenu(String name) {
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
         if(StrUtil.isNotBlank(name)){
             queryWrapper.like("name",name);
