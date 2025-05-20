@@ -1,12 +1,14 @@
 //获取当前可视范围的高度
 export const getClientHeight = () => {
-    let clientHeight = 0;
-    if (document.body.clientHeight && document.documentElement.clientHeight) {
-        clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
-    } else {
-        clientHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight)
-    }
-    return clientHeight
+    return window.innerHeight
+
+    // let clientHeight = 0;
+    // if (document.body.clientHeight && document.documentElement.clientHeight) {
+    //     clientHeight = Math.min(document.body.clientHeight, document.documentElement.clientHeight)
+    // } else {
+    //     clientHeight = Math.max(document.body.clientHeight, document.documentElement.clientHeight)
+    // }
+    // return clientHeight
 }
 
 //获取文档完整的高度

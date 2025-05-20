@@ -4,7 +4,6 @@
     <el-button style="margin-left: 5px" type="primary" @click="load">搜索</el-button>
     <el-button style="margin-left: 5px" type="warning" @click="reset">重置</el-button>
     <div style="margin: 10px 0">
-
       <el-button type="primary" @click="handUpload" style="display: inline-block; margin-right: 5px">上传文件 <i class="el-icon-top"></i></el-button>
       <el-popconfirm
           confirm-button-text='确定'
@@ -16,7 +15,6 @@
       >
         <el-button type="danger" slot="reference" style="margin-right: 5px">批量删除 <i class="el-icon-remove-outline"></i></el-button>
       </el-popconfirm>
-
     </div>
     <el-table :data="tableData" :header-cell-class-name="headerBg" @selection-change="handleSelectionChange" border stripe>
       <el-table-column
@@ -116,6 +114,8 @@
 
 <script>
 import fileApi from "@/api/fileApi.js";
+import {serverIp} from "../../../public/config.js";
+
 export default {
   name: "File",
 
@@ -139,7 +139,7 @@ export default {
   },
   methods: {
     load() {
-      fileApi.page(
+      fileApi.queryPage(
           {
             pageNum: this.pageNum,
             pageSize: this.pageSize,
@@ -149,6 +149,8 @@ export default {
         if (res.code === '200') {
           this.tableData = res.data.records
           this.total = res.data.total
+        }else {
+          this.$message.error(res.msg)
         }
 
       })
@@ -174,7 +176,7 @@ export default {
       let filename = this.form.name
       filename = filename.endsWith('.'+this.form.type)?filename:filename.concat(".",this.form.type)
       this.form.name = filename
-      fileApi.update(this.form).then(res => {
+      fileApi.modify(this.form).then(res => {
         if (res.code === '200') {
           this.$message.success("编辑成功");
         } else {
@@ -195,6 +197,10 @@ export default {
     },
     handleDeleteBatch() {
       let ids = this.multipleSelection.map(v => v.id)
+      if(ids.length === 0){
+        this.$message.error("请选择要删除的数据")
+        return
+      }
       fileApi.deleteBatch(ids).then(res => {
         if (res.code === '200') {
           this.$message.success("批量删除成功");
@@ -222,7 +228,7 @@ export default {
       fileApi.download(url)
     },
     changeEnable(row){
-      fileApi.update(row).then(res=>{
+      fileApi.modify(row).then(res=>{
         if(res.code === '200'){
           this.$message.success("操作成功")
         }
@@ -232,7 +238,7 @@ export default {
       this.uploadDialogFormVisible = true
     },
     preview(url) {
-      window.open('http://127.0.0.1:8012/onlinePreview?url=' + encodeURIComponent(window.btoa((url))))
+      window.open('http://'+serverIp+':8012/onlinePreview?url=' + encodeURIComponent(window.btoa((url))))
     },
 
   }

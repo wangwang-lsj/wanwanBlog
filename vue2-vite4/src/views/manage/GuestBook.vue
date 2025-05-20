@@ -141,7 +141,7 @@
 </template>
 
 <script>
-import leaveWordApi from "@/api/leaveWordApi.js";
+import messageApi from "@/api/messageApi.js";
 import manage from "@/views/manage/Manage.vue";
 
 export default {
@@ -164,7 +164,7 @@ export default {
   },
   methods: {
     load(){
-      leaveWordApi.page(
+      messageApi.queryPage(
           {
             pageNum: this.pageNum,
             pageSize: this.pageSize,
@@ -175,6 +175,8 @@ export default {
         if(res.code=== '200'){
           this.tableData = res.data.records
           this.total = res.data.total
+        }else {
+          this.$message.error(res.msg)
         }
       })
     },
@@ -190,7 +192,7 @@ export default {
       this.multipleSelection = val
     },
     handleDelete(id){
-      leaveWordApi.deleteById(id).then(res=>{
+      messageApi.deleteById(id).then(res=>{
         if (res.code === '200'){
           this.$message.success("删除成功");
         }else{
@@ -201,7 +203,11 @@ export default {
     },
     handleDeleteBatch(){
       let ids = this.multipleSelection.map(v => v.id)
-      leaveWordApi.deleteBatch(ids).then(res=>{
+      if(ids.length === 0){
+        this.$message.error("请选择要删除的数据")
+        return
+      }
+      messageApi.deleteBatch(ids).then(res=>{
         if (res.code === '200'){
           this.$message.success("批量删除成功");
         }else{
@@ -216,7 +222,7 @@ export default {
       }
       row.replyUserId = this.currentUser.id
       row.replied = true
-      leaveWordApi.reply(row).then(res=>{
+      messageApi.updateReply(row).then(res=>{
         if (res.code === '200'){
           this.$message.success("回复成功");
         }else{
@@ -226,7 +232,7 @@ export default {
       })
     },
     save(){
-      leaveWordApi.leaveMessage(this.form).then(res=>{
+      messageApi.createMessage(this.form).then(res=>{
         if (res.code === '200'){
           this.$message.success("添加成功");
           this.addDialog=false
@@ -237,7 +243,7 @@ export default {
       })
     },
     handleEnableChange(row){
-      leaveWordApi.show({
+      messageApi.updateShow({
         id: row.id,
         enable: row.enable
       }).then(res=>{
@@ -254,6 +260,7 @@ export default {
       this.load()
     },
     handleCurrentChange(pageNum) {
+      this.tableData = []
       this.pageNum=pageNum
       this.load()
     },

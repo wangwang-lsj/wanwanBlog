@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanwan.springboot.mapper.UserArticleLikeMapper">
 
-    <resultMap id="BaseResultMap" type="com.wanwan.springboot.entity.UserArticleLike">
+    <resultMap id="BaseResultMap" type="com.wanwan.springboot.pojo.po.UserArticleLike">
             <id property="userId" column="user_id" jdbcType="INTEGER"/>
             <id property="articleId" column="article_id" jdbcType="INTEGER"/>
             <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>

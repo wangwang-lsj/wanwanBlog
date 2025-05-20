@@ -1,6 +1,6 @@
 package com.wanwan.springboot.mapper;
 
-import com.wanwan.springboot.entity.UserArticleLike;
+import com.wanwan.springboot.pojo.po.UserArticleLike;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 

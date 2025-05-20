@@ -6,7 +6,7 @@
       <el-button style="margin-left: 5px" type="warning" @click="reset">重置</el-button>
     </div>
     <div style="margin: 10px 0">
-      <el-button type="primary" @click="handleAdd"style="margin-right: 5px">新增 <i class="el-icon-circle-plus-outline"></i></el-button>
+      <el-button type="primary" @click="handleCreate" style="margin-right: 5px">新增 <i class="el-icon-circle-plus-outline"></i></el-button>
       <template>
         <el-popconfirm
             confirm-button-text='确定'
@@ -54,15 +54,26 @@
       </el-pagination>
     </div>
 
-    <el-dialog title="角色信息" :visible.sync="dialogFormVisible" width="20%">
+    <el-dialog title="创建类别" :visible.sync="createFormVisible" width="20%">
       <el-form label-width="80px" size="small">
         <el-form-item label="名称" >
           <el-input v-model="form.name" autocomplete="off"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="save">确 定</el-button>
+        <el-button @click="createFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="create">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="修改类别" :visible.sync="modifyFormVisible" width="20%">
+      <el-form label-width="80px" size="small">
+        <el-form-item label="名称" >
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="modifyFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="modify">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -79,7 +90,8 @@ export default {
       pageSize: 10,
       total: 0,
       tableData: [],
-      dialogFormVisible: false,
+      createFormVisible: false,
+      modifyFormVisible: false,
       multipleSelection: [],
       form: {},
       name: '',
@@ -90,7 +102,7 @@ export default {
   },
   methods: {
     load(){
-      categoryApi.page({
+      categoryApi.queryPage({
           pageNum: this.pageNum,
           pageSize: this.pageSize,
           name: this.name
@@ -98,6 +110,8 @@ export default {
         if(res.code=== '200'){
           this.tableData = res.data.records
           this.total = res.data.total
+        }else {
+          this.$message.error(res.msg)
         }
       })
     },
@@ -105,15 +119,15 @@ export default {
       this.name = ''
       this.load()
     },
-    handleAdd(){
-      this.dialogFormVisible = true
+    handleCreate(){
+      this.createFormVisible = true
       this.form = {}
     },
     handleSelectionChange(val){
       this.multipleSelection = val
     },
     handleEdit(row){
-      this.dialogFormVisible = true
+      this.modifyFormVisible = true
       this.form = row
     },
     handleDelete(id){
@@ -137,13 +151,24 @@ export default {
         this.load()
       })
     },
-    save(){
-      categoryApi.saveOrUpdate(this.form).then(res=>{
+    create(){
+      categoryApi.create(this.form).then(res=>{
         if (res.code === '200'){
-          this.$message.success("保存成功");
-          this.dialogFormVisible=false
+          this.$message.success("创建成功");
+          this.createFormVisible=false
         }else{
-          this.$message.error("保存失败")
+          this.$message.error("创建失败")
+        }
+        this.load()
+      })
+    },
+    modify(){
+      categoryApi.modify(this.form).then(res=>{
+        if (res.code === '200'){
+          this.$message.success("修改成功");
+          this.modifyFormVisible=false
+        }else{
+          this.$message.error("修改失败")
         }
         this.load()
       })

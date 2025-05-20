@@ -2,11 +2,11 @@
   <div class="ArticleDetailBg">
     <div style="display: flex;justify-content: center;margin: 0 auto;max-width: 1600px;">
       <!--左-->
-      <div class="hidden-md-and-down" style="padding: 0 10px;min-width: 20%;">
+      <div v-if="windowWidth>=1200" style="padding: 0 10px;min-width: 20%;">
       </div>
       <!--中-->
-      <div :style="{padding: browserWidth < 600 ? '0px' : '0 10px',minWidth: browserWidth < 1200 ? '100%' : '60%'}">
-        <div :style="browserWidth<600?'padding:5px':'padding: 10px'" class="ArticleItem">
+      <div :style="{padding: windowWidth < 600 ? '0px' : '0 10px',minWidth: windowWidth < 1200 ? '100%' : '60%'}">
+        <div :style="windowWidth<600?'padding:5px':'padding: 10px'" class="ArticleItem">
           <!--文章标题-->
           <h1 class="ArticleItemTitle">
             {{article.title}}
@@ -51,7 +51,7 @@
         </div>
       </div>
       <!--右-->
-      <div class="hidden-md-and-down" style="padding: 0 10px;min-width: 20%;">
+      <div v-if="windowWidth>=1200" style="padding: 0 10px;min-width: 20%;">
         <div style="position: sticky; top: 70px;">
           <div style="background-color: #ffffff; padding: 20px;border-radius: 5px;">
             <h2>目录</h2>
@@ -105,10 +105,14 @@ export default {
       AmOrPm: "",
       fontSize: 24,
       commentCount: 0,
-      browserWidth: window.innerWidth,
       currentMenu: 0,
       relatedArticleList:[],
       componentKey: 0,
+    }
+  },
+  computed:{
+    windowWidth(){
+      return this.$store.state.windowWidth
     }
   },
   // watch:{
@@ -116,7 +120,6 @@ export default {
   //
   //   },
   // },
-
   created() {
     this.load()
 
@@ -126,6 +129,7 @@ export default {
     // 标题 DOM 容器
     const headerContainer = document.getElementById('header-container')
     // console.log(headerContainer)
+    if(headerContainer === null) return
     headerContainer.addEventListener('mousedown', event => {
       if (event.target.tagName !== 'LI') return
       event.preventDefault()
@@ -137,33 +141,22 @@ export default {
       window.scrollTo({ top: offset, behavior: 'smooth' });
     });
     // this.Test()
-    window.addEventListener('resize', this.handleResize);
   },
-  destroyed() {
-    window.removeEventListener('resize', this.handleResize);
-  },
+  // beforeRouteEnter(to,from,next){
+  //   next(vm => {
+  //     //因为当钩子执行前，组件实例还没被创建
+  //     // vm 就是当前组件的实例相当于上面的 this，所以在 next 方法里你就可以把 vm 当 this 来用了。
+  //     window.addEventListener('resize', vm.handleResize);
+  //   });
+  // },
 
-  beforeRouteEnter(to,from,next){
-    next(vm => {
-      //因为当钩子执行前，组件实例还没被创建
-      // vm 就是当前组件的实例相当于上面的 this，所以在 next 方法里你就可以把 vm 当 this 来用了。
-      window.addEventListener('resize', vm.handleResize);
-
-    });
-  },
   beforeRouteUpdate(to, from, next) {
     next()//执行这个之后，id就更新了
     this.goRelatedDetail(this.$route.query.id)
-
-  },
-  // 删除滚动监听器，建议使用beforeRouteLeave，因为destroyed()钩子在路由跳转时不会触发(加了这个就跳不了路由)
-  beforeRouteLeave(to,from,next) {
-    window.removeEventListener('resize', this.handleResize);
-    next()
   },
   beforeDestroy() {
     this.article.readCount+=1
-    articleApi.recordReadCount(this.articleId)
+    articleApi.updateReadCount(this.articleId)
   },
 
   methods:{
@@ -171,7 +164,7 @@ export default {
       if(Object.keys(this.currentUser).length === 0) {
         this.currentUser.id = 0
       }
-      articleApi.getOneAll(this.articleId).then(res=>{
+      articleApi.queryById(this.articleId).then(res=>{
         if(res.code ==='200'){
           // console.log(res)
           this.article = res.data
@@ -185,10 +178,10 @@ export default {
         // console.log(this.article)
       })
 
-      articleApi.getLike(this.articleId,this.currentUser.id).then(res=>{
+      articleApi.queryLike(this.articleId,this.currentUser.id).then(res=>{
         if(res.code === '200'){
           // console.log(res)
-          if(res.data.length !==0){
+          if(res.data){
             this.isLike = true
           }else {
             this.isLike = false
@@ -198,7 +191,7 @@ export default {
       this.getCommentCount()
     },
     getCommentCount(){
-      commentApi.getCountByArticleId(this.articleId).then(res=>{
+      commentApi.queryCountByArticleId(this.articleId).then(res=>{
         if(res.code === '200'){
           this.commentCount = res.data
         }
@@ -219,7 +212,7 @@ export default {
         return
       }
       if (this.isLike===true){
-        articleApi.likeOrDisLike({
+        articleApi.updateLike({
           articleId: this.articleId,
           userId: this.currentUser.id,
           isLike: this.isLike,
@@ -228,10 +221,11 @@ export default {
             this.isLike = false
             this.article.likes-=1
           }else{
+            this.$message.error(res.msg)
           }
         })
       }else {
-        articleApi.likeOrDisLike({
+        articleApi.updateLike({
           articleId: this.articleId,
           userId: this.currentUser.id,
           isLike: this.isLike,
@@ -240,12 +234,10 @@ export default {
             this.isLike = true
             this.article.likes+=1
           }else{
+            this.$message.error(res.msg)
           }
         })
       }
-    },
-    handleResize() {
-      this.browserWidth = window.innerWidth;
     },
 
     getAMPM(timeString) {
@@ -267,7 +259,7 @@ export default {
     },
 
     loadRelatedArticle(categoryId){
-      articleApi.getRelations({
+      articleApi.queryRelations({
         pageNum: 1,
         pageSize: 5,
         articleId: this.articleId,

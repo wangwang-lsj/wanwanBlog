@@ -344,7 +344,7 @@ export default {
         postComment() {
 
             // if (!this.textareaContent) {
-            //   this.$message("评论不能为空")
+            //   this.$messageApi("评论不能为空")
             //   return
             // }
 

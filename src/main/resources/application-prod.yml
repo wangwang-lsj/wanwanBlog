@@ -6,32 +6,44 @@ spring:
   #数据库配置
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${server.ip}:3306/wanwan?serverTimezone=GMT%2b8&allowMultiQueries=true
-    username: root
-    password: luoshujiang
+    url: jdbc:mysql://localhost:3306/wanwan?serverTimezone=GMT%2b8&allowMultiQueries=true
+    username: wanwan
+    password: y6RABCAYEJZ7KNac
+    type: com.alibaba.druid.pool.DruidDataSource #引入druid数据源
     druid:
+      #SpringBoot因为默认是hikari数据源所以对于其他数据源默认是不注入这些属性的，需要手动配置
+      #druid数据源专有配置
+      initialSize: 5
+      minIdle: 5
+      maxActive: 20
+      maxWait: 600000
+      # 主要配置以上几个即可
+      timeBetweenEvictionRunsMillis: 600000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: SELECT 1 FROM DUAL
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      #配置监控统计拦截的filters：stat:监控统计、self4j(使用log4j的记得导入log4j的依赖）：日志记录、wall：防御sql注入 此处配置不能遗漏服务sql监控台不能监控sql
+      filter:
+        slf4j:
+          enabled: true
+        stat:
+          enabled: true
+          merge-sql: true
+          slow-sql-millis: 5000
+        wall:
+          enabled: true
+      #配置stat-view-servlet
       stat-view-servlet:
         enabled: true
         login-username: admin
         login-password: 123456
         reset-enable: false
-
-      web-stat-filter: #监控web
-        url-pattern: /*
-        exclusions: '*.png,/druid/*'
+      #配置web-stat-filter
+      web-stat-filter:
         enabled: true
-
-      filters: stat,wall,slf4j  #底层开启功能，stat：sql监控，wall：防火墙
-      filter:
-        stat:
-          slow-sql-millis: 1000
-          log-slow-sql: true
-          enabled: true
-        wall:
-          enabled: true
-          config:
-            drop-table-allow: false
-      aop-patterns: com.example.day3.*
   mvc:
     pathmatch:
       # 整合swagger时报错解决
@@ -44,6 +56,17 @@ spring:
     host: 127.0.0.1
     port: 6379
     password: luoshujiang
+  mail:
+    host: smtp.qq.com
+    protocol: smtp
+    default-encoding: UTF-8
+    username: 3491454639@qq.com
+    password: hvgbcpsaxrsuchjd
+    nickname: 玩玩
+    properties:
+      mail.smtp.auth: true #启用SMTP服务器的身份验证，这是为了确保只有合法用户可以发送邮件。
+      mail.smtp.starttls.enable: true #启用TLS加密，这是为了确保邮件传输的安全性。
+      mail.smtp.starttls.required: true #要求使用TLS加密，如果连接不是通过TLS加密传输，则连接将失败。
   jackson:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8

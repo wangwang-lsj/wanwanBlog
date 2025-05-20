@@ -56,7 +56,7 @@
         <div class="GitPart">
           <div style="background-color: #555555;height: 110px;"></div>
           <div style="position: absolute;top: 70px;text-align: center;width: 100%">
-            <img src="/头像.jpg" style="width: 80px; border-radius: 100%">
+            <img src="/githubAvatar.jpg" style="width: 80px; border-radius: 100%">
           </div>
           <div style="background-color: #ffffff;height: 100px;">
             <div style="font-size: 18px;text-align: center;margin-top: 50px;">玩玩的Github</div>

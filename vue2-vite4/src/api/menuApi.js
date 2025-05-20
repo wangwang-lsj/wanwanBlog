@@ -2,15 +2,15 @@ import request from "@/utils/request.js";
 
 const menuApi = {
     /**
-     * 分页查询菜单
-     * @param params
+     * 根据名称获取菜单
+     * @param name
      * @returns {*}
      */
-    page(params) {
+    queryByName(name) {
         return request({
             method: "GET",
-            url: "/menus/page",
-            params
+            url: "/api/menus",
+            params: { name }
         });
     },
 
@@ -18,51 +18,40 @@ const menuApi = {
      * 获取所有图标
      * @returns {*}
      */
-    getIcons() {
+    queryIcons() {
         return request({
             method: "GET",
-            url: "/menus/icons"
+            url: "/api/menus/icons"
         });
     },
 
-    /**
-     * 根据名称获取菜单
-     * @param name
-     * @returns {*}
-     */
-    getByName(name) {
-        return request({
-            method: "GET",
-            url: "/menus",
-            params: { name }
-        });
-    },
 
-    /**
-     * 根据id获取菜单
-     * @param id
-     * @returns {*}
-     */
-    getById(id) {
-        return request({
-            method: "GET",
-            url: "/menus/" + id
-        });
-    },
+
 
     /**
      * 保存或更新菜单
      * @param data
      * @returns {*}
      */
-    saveOrUpdate(data) {
+    modify(data) {
         return request({
-            method: "POST",
-            url: "/menus",
+            method: "PUT",
+            url: "/api/menus",
             data
         });
     },
-
+    /**
+     * 保存或更新菜单
+     * @param data
+     * @returns {*}
+     */
+    create(data) {
+        return request({
+            method: "POST",
+            url: "/api/menus",
+            data
+        });
+    },
     /**
      * 通过id删除菜单
      * @param id
@@ -71,7 +60,7 @@ const menuApi = {
     deleteById(id) {
         return request({
             method: "DELETE",
-            url: "/menus/" + id
+            url: "/api/menus/" + id
         });
     },
 
@@ -83,7 +72,7 @@ const menuApi = {
     deleteBatch(ids) {
         return request({
             method: "DELETE",
-            url: "/menus",
+            url: "/api/menus",
             data: ids
         });
     }

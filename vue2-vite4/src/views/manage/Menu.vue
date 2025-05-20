@@ -69,7 +69,7 @@
     <!--      :total="total">-->
     <!--  </el-pagination>-->
     <!--</div>-->
-    <el-dialog title="菜单信息" :visible.sync="dialogFormVisible" width="20%">
+    <el-dialog title="新建菜单" :visible.sync="createFormVisible" width="20%">
       <el-form label-width="80px" size="small">
         <el-form-item label="名称" >
           <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -93,8 +93,36 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="save">确 定</el-button>
+        <el-button @click="createFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="create">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="编辑菜单" :visible.sync="modifyFormVisible" width="20%">
+      <el-form label-width="80px" size="small">
+        <el-form-item label="名称" >
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="路径" >
+          <el-input v-model="form.path" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="页面路径" >
+          <el-input v-model="form.pagePath" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="图标" >
+          <el-select clearable v-model="form.icon" placeholder="请选择" style="width: 100%">
+            <el-option v-for="item in iconOptions" :key="item.name" :label="item.name" :value="item.value"><i :class="item.value"></i>{{item.name}}</el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="描述" >
+          <el-input v-model="form.description" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="顺序" >
+          <el-input v-model="form.sortNum" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="modifyFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="modify">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -113,7 +141,9 @@ export default {
       // pageNum: 1,
       // pageSize: 10,
       name: "",
-      dialogFormVisible: false,
+      createFormVisible: false,
+      modifyFormVisible: false,
+
       form:{},
       multipleSelection:[],
       iconOptions:[],
@@ -124,10 +154,12 @@ export default {
   },
   methods:{
     load(){
-      menuApi.getByName(this.name).then(res=>{
+      menuApi.queryByName(this.name).then(res=>{
         if(res.code==='200'){
           this.tableData = res.data
           this.total = res.data.total
+        }else {
+          this.$message.error(res.msg)
         }
       })
     },
@@ -144,12 +176,12 @@ export default {
     //   this.load()
     // },
     handleAdd(pid){
-      this.dialogFormVisible=true
+      this.createFormVisible=true
       this.form={}
       if(pid){
         this.form.pid = pid
       }
-      menuApi.getIcons().then(res=>{
+      menuApi.queryIcons().then(res=>{
         if(res.code==='200'){
           this.iconOptions = res.data
         }
@@ -157,8 +189,8 @@ export default {
     },
     handleEdit(row){
       this.form = row
-      this.dialogFormVisible = true
-      menuApi.getIcons().then(res=>{
+      this.modifyFormVisible = true
+      menuApi.queryIcons().then(res=>{
         if(res.code==='200'){
           this.iconOptions = res.data
         }
@@ -176,6 +208,10 @@ export default {
     },
     handleDeleteBatch(){
       let ids = this.multipleSelection.map(v => v.id)
+      if(ids.length === 0){
+        this.$message.error("请选择要删除的数据")
+        return
+      }
       menuApi.deleteBatch(ids).then(res=>{
         if (res.code === '200'){
           this.$message.success("批量删除成功");
@@ -189,14 +225,27 @@ export default {
       console.log(val)
       this.multipleSelection = val
     },
-    save(){
-      menuApi.saveOrUpdate(this.form).then(res=>{
+    create(){
+      menuApi.create(this.form).then(res=>{
         if (res.code === '200'){
           this.$message.success("添加成功");
           this.$emit("refreshMenus")
-          this.dialogFormVisible=false
+          this.createFormVisible=false
         }else{
           this.$message.error("添加失败")
+        }
+        this.load()
+      })
+    },
+
+    modify(){
+      menuApi.modify(this.form).then(res=>{
+        if (res.code === '200'){
+          this.$message.success("编辑成功");
+          this.$emit("refreshMenus")
+          this.modifyFormVisible=false
+        }else{
+          this.$message.error("编辑失败")
         }
         this.load()
       })

@@ -23,10 +23,10 @@ const fileApi = {
      * @param params
      * @returns {*}
      */
-    page(params) {
+    queryPage(params) {
         return request({
             method: "GET",
-            url: "/files/page",
+            url: "/api/files/page",
             params
         });
     },
@@ -36,10 +36,10 @@ const fileApi = {
      * @param data
      * @returns {*}
      */
-    update(data) {
+    modify(data) {
         return request({
             method: "PUT",
-            url: "/files/update",
+            url: "/api/files",
             data
         });
     },
@@ -52,7 +52,7 @@ const fileApi = {
     deleteById(id) {
         return request({
             method: "DELETE",
-            url: "/files/" + id
+            url: "/api/files/" + id
         });
     },
 
@@ -64,21 +64,11 @@ const fileApi = {
     deleteBatch(ids) {
         return request({
             method: "DELETE",
-            url: "/files",
+            url: "/api/files",
             data: ids
         });
     },
 
-    /**
-     * 编辑文件信息
-     * @returns {*}
-     */
-    editFileById() {
-        return request({
-            method: "PUT",
-            url: "/files"
-        });
-    }
 };
 
 export default fileApi;

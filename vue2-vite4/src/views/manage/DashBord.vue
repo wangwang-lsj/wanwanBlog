@@ -185,9 +185,11 @@ export default {
     //   option && myChart.setOption(option);
     //   pieOption && pieChart.setOption(pieOption);
     // });
-    echartsApi.statistics().then(res=>{
+    echartsApi.queryStatistics().then(res=>{
       if (res.code === '200'){
         this.statistics = res.data
+      }else {
+        this.$message.error(res.msg)
       }
     })
   },

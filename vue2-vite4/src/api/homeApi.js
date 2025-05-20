@@ -5,10 +5,10 @@ const homeApi = {
      * 获取所有轮播图
      * @returns {*}
      */
-    getAll(source) {
+    queryAll(source) {
         return request({
             method: "GET",
-            url: "/home/slider",
+            url: "/api/home/slider",
             headers: {
                 "Wan-Source": source
             }
@@ -18,25 +18,32 @@ const homeApi = {
      * 获取首页展示的文章
      * @returns {*}
      */
-    getHomeArticles(){
+    queryHomeArticles(){
         return request({
             method: "GET",
-            url: "/home/articles"
+            url: "/api/home/articles"
         })
     },
+
     /**
      * 保存或更新轮播图
      * @param data
      * @returns {*}
      */
-    saveOrUpdate(data) {
+    create(data) {
         return request({
             method: "POST",
-            url: "/home/slider",
+            url: "/api/home/slider",
             data
         });
     },
-
+    modify(data){
+        return request({
+            method: "PUT",
+            url: "/api/home/slider",
+            data
+        });
+    },
     /**
      * 根据id删除轮播图
      * @param id
@@ -45,7 +52,7 @@ const homeApi = {
     deleteById(id) {
         return request({
             method: "DELETE",
-            url: "/home/slider/" + id
+            url: "/api/home/slider/" + id
         });
     },
 
@@ -57,7 +64,7 @@ const homeApi = {
     deleteBatch(ids) {
         return request({
             method: "DELETE",
-            url: "/home/slider",
+            url: "/api/home/slider",
             data: ids
         });
     },
@@ -67,10 +74,10 @@ const homeApi = {
      * @param data
      * @returns {*}
      */
-    show(data) {
+    updateShow(data) {
         return request({
             method: "PATCH",
-            url: "/home/slider",
+            url: "/api/home/slider",
             data
         });
     },

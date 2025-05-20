@@ -1,6 +1,6 @@
 package com.wanwan.springboot.mapper;
 
-import com.wanwan.springboot.entity.Slideshow;
+import com.wanwan.springboot.pojo.po.Slideshow;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 

@@ -1,6 +1,6 @@
 package com.wanwan.springboot.service;
 
-import com.wanwan.springboot.entity.Role;
+import com.wanwan.springboot.pojo.po.Role;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -15,7 +15,11 @@ import java.util.List;
  */
 public interface IRoleService extends IService<Role> {
 
-    void setRoleMenu(Integer roleId, List<Integer> menuIds);
+    void updateRoleMenu(Integer roleId, List<Integer> menuIds);
 
-    List<Integer> getRoleMenu(Integer roleId);
+    List<Integer> listRoleMenu(Integer roleId);
+    boolean saveRole(Role role);
+
+    int updateRole(Role role);
+
 }

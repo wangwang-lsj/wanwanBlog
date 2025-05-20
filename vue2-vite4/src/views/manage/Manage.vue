@@ -53,9 +53,11 @@ export default {
       }
     },
     getUser(){
-      userApi.getByName(this.user.username).then((res)=>{
+      userApi.queryByName(this.user.username).then((res)=>{
         if(res.code === '200'){
           this.user = res.data
+        }else {
+          this.$message.error(res.msg)
         }
       })
     },

@@ -112,7 +112,7 @@
         </div>
 
       </div>
-      <div v-if="isBottom && total > 10" style="text-align: center">到底了</div>
+      <div v-if="noMore && total > 10" style="text-align: center">到底了</div>
       <div v-if="!total">
         <p style="font-size: 50px;text-align: center">暂无评论</p>
       </div>
@@ -124,6 +124,7 @@
 import { getClientHeight, getScrollHeight, getScrollTop } from "@/utils/MyUtils.js";
 import EmojiText from "@/components/EmojiText/EmojiText.vue";
 import commentApi from "@/api/commentApi.js";
+import {throttle} from "lodash";
 
 export default {
   name: "Comment",
@@ -141,10 +142,13 @@ export default {
       pageNum: 1,
       pageSize: 10,
       total: 0,
+
+      throttledWindowScroll: null, // 存储throttle处理后的函数引用
+
     }
   },
   computed: {
-    isBottom() {
+    noMore() {
       return this.commentList.length === this.total
     }
   },
@@ -152,22 +156,23 @@ export default {
     this.load()
   },
   mounted() {
-    window.addEventListener('scroll', this.windowScroll) //监听页面滚动
+    this.throttledWindowScroll = throttle(this.windowScroll.bind(this), 200); // 将throttle后的函数存入data
+    window.addEventListener('scroll', this.throttledWindowScroll) //监听页面滚动
   },
-  destroyed() {
-    window.removeEventListener("scroll", this.windowScroll);//销毁滚动事件
+  beforeDestroy() {
+    window.removeEventListener("scroll", this.throttledWindowScroll);//销毁滚动事件
   },
 
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      //因为当钩子执行前，组件实例还没被创建
-      // vm 就是当前组件的实例相当于上面的 this，所以在 next 方法里你就可以把 vm 当 this 来用了。
-      window.addEventListener('scroll', vm.windowScroll) //监听页面滚动
-    });
-  },
+  // beforeRouteEnter(to, from, next) {
+  //   next(vm => {
+  //     //因为当钩子执行前，组件实例还没被创建
+  //     // vm 就是当前组件的实例相当于上面的 this，所以在 next 方法里你就可以把 vm 当 this 来用了。
+  //     window.addEventListener('scroll', vm.throttledWindowScroll) //监听页面滚动
+  //   });
+  // },
   // 删除滚动监听器，建议使用beforeRouteLeave，因为destroyed()钩子在路由跳转时不会触发(加了这个就跳不了路由)
   beforeRouteLeave(to, from, next) {
-    window.removeEventListener("scroll", this.windowScroll);//销毁滚动事件
+    window.removeEventListener("scroll", this.throttledWindowScroll);//销毁滚动事件
     next()
   },
   methods: {
@@ -175,7 +180,7 @@ export default {
       if(Object.keys(this.currentUser).length === 0) {
         this.currentUser.id = 0
       }
-      commentApi.getByArticleId({
+      commentApi.queryPageByCondition({
         pageNum: this.pageNum,
         pageSize: this.pageSize,
         articleId: this.articleId,
@@ -186,15 +191,52 @@ export default {
           this.commentList = res.data.records
           this.total = res.data.total
         } else {
-          // this.$message.error(res.msg)
+          this.$message.error(res.msg)
         }
       })
     },
+    windowScroll() {
+      if (this.noMore) {
+        return
+      }
+      //获取三个值
+      let scrollTop = getScrollTop()
+      let clientHeight = getClientHeight()
+      let scrollHeight = getScrollHeight()
+      // console.log(scrollTop, clientHeight, scrollHeight)
+      //如果满足公式则，确实到底了
+      if (scrollHeight-(scrollTop + clientHeight) < 100) {
+        //发送异步请求请求数据，同时携带offset并自增offset
+        //noMore是自定义变量，如果是最后一批数据则以后都不加载
+        this.loadMore()
+        // console.log("到底了,加载更多")
+      }
+    },
+    loadMore(){
+      // 在请求前递增pageNum，确保请求的是下一页数据
+      const nextPage = this.pageNum + 1;
+      commentApi.queryPageByCondition({
+        pageNum: nextPage,
+        pageSize: this.pageSize,
+        articleId: this.articleId,
+        currentUserId: this.currentUser.id
+      }).then(res => {
+        if (res.code === '200') {
+          // console.log(res)
+          this.pageNum = nextPage
+          this.commentList = this.commentList.concat(res.data.records)
+        } else {
+          // this.$messageApi.error(res.msg)
+        }
+      })
+    },
+    //回调函数
+
     showMore(comment) {
       if (comment.children.length === comment.replyTotalCount) {
         return
       }
-      commentApi.getReplies({
+      commentApi.queryReplies({
         commentId: comment.id,
         startIndex: comment.children.length,
         count: comment.replyTotalCount - comment.children.length,
@@ -204,6 +246,8 @@ export default {
         if (res.code === '200') {
           // console.log("成功")
           comment.children = comment.children.concat(res.data)
+        }else {
+          this.$message.error(res.msg)
         }
       })
     },
@@ -220,7 +264,6 @@ export default {
         this.$message("请先登录")
         return
       }
-
       if (!content) {
         this.$message("评论不能为空")
         return
@@ -233,9 +276,9 @@ export default {
       this.comment.likeNum = 0
       this.comment.articleId = this.articleId
 
-      commentApi.addComment(this.comment).then(res => {
+      commentApi.createComment(this.comment).then(res => {
         if (res.code === '200') {
-          // this.$message.success("评论成功")
+          // this.$messageApi.success("评论成功")
           this.$refs['firstCommentRef'].clearTextareaContent()
           // 加一再减一,不然滚动加载出错哦
           this.commentList.unshift(res.data)
@@ -244,6 +287,8 @@ export default {
           }
           //这里可能有问题
           this.total += 1
+        }else {
+          this.$message.error(res.msg)
         }
       })
     },
@@ -303,9 +348,9 @@ export default {
       }
       secondComment.replyUserId = comment.userId
       secondComment.replyCommentId = comment.id
-      commentApi.addComment(secondComment).then(res => {
+      commentApi.createComment(secondComment).then(res => {
         if (res.code === '200') {
-          // this.$message.success("评论成功")
+          // this.$messageApi.success("评论成功")
           // 加一再减一,不然滚动加载出错哦
           if (comment.parentId === null) {
             // 说明是comment是一级评论
@@ -331,6 +376,8 @@ export default {
           }
           // this.$refs['mainCommentRef'].clearTextareaContent()
           this.secondCommentContent = ''
+        }else {
+          this.$message.error(res.msg)
         }
       })
     },
@@ -340,19 +387,23 @@ export default {
         return
       }
       if (comment.isLike) {
-        commentApi.disLike(comment.id, this.currentUser.id).then(res => {
+        commentApi.updateDisLike(comment.id, this.currentUser.id).then(res => {
           if (res.code === '200') {
             comment.likeNum -= 1
             comment.isLike = !comment.isLike
             this.$message.success("取消点赞成功")
+          }else {
+            this.$message.error(res.msg)
           }
         })
       } else {
-        commentApi.like(comment.id,this.currentUser.id).then(res => {
+        commentApi.updateLike(comment.id,this.currentUser.id).then(res => {
           if (res.code === '200') {
             comment.likeNum += 1
             comment.isLike = !comment.isLike
             this.$message.success("点赞成功")
+          }else {
+            this.$message.error(res.msg)
           }
         })
       }
@@ -360,38 +411,7 @@ export default {
     save() {
 
     },
-    //回调函数
-    windowScroll() {
-      if (this.isBottom) {
-        return
-      }
-      //获取三个值
-      let scrollTop = getScrollTop()
-      let clientHeight = getClientHeight()
-      let scrollHeight = getScrollHeight()
-      //如果满足公式则，确实到底了
-      if (scrollTop + clientHeight === scrollHeight) {
-        //发送异步请求请求数据，同时携带offset并自增offset
-        //noMore是自定义变量，如果是最后一批数据则以后都不加载
-        if (!this.noMore) {
-          this.pageNum += 1
-          commentApi.getByArticleId({
-            pageNum: this.pageNum,
-            pageSize: this.pageSize,
-            articleId: this.articleId,
-            currentUserId: this.currentUser.id
-          }).then(res => {
-            if (res.code === '200') {
-              // console.log(res)
-              this.commentList = this.commentList.concat(res.data.records)
-            } else {
-              // this.$message.error(res.msg)
-            }
-          })
-        }
-        console.log("到底了")
-      }
-    },
+
 
 
   }

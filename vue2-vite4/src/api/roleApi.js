@@ -6,10 +6,10 @@ const roleApi = {
      * @param params
      * @returns {*}
      */
-    page(params) {
+    queryPage(params) {
         return request({
             method: "GET",
-            url: "/roles/page",
+            url: "/api/roles/page",
             params
         });
     },
@@ -18,34 +18,35 @@ const roleApi = {
      * 查询所有角色
      * @returns {*}
      */
-    getRoles() {
+    queryRoles() {
         return request({
             method: "GET",
-            url: "/roles"
+            url: "/api/roles"
         });
     },
 
-    /**
-     * 根据id查询角色
-     * @param id
-     * @returns {*}
-     */
-    getRoleById(id) {
-        return request({
-            method: "GET",
-            url: "/roles/" + id
-        });
-    },
 
     /**
-     * 保存或更新角色
+     * 保存角色
      * @param data
      * @returns {*}
      */
-    saveOrUpdate(data) {
+    create(data) {
         return request({
             method: "POST",
-            url: "/roles",
+            url: "/api/roles",
+            data
+        });
+    },
+    /**
+     * 更新角色
+     * @param data
+     * @returns {*}
+     */
+    modify(data) {
+        return request({
+            method: "PUT",
+            url: "/api/roles",
             data
         });
     },
@@ -58,7 +59,7 @@ const roleApi = {
     deleteById(id) {
         return request({
             method: "DELETE",
-            url: "/roles/" + id
+            url: "/api/roles/" + id
         });
     },
 
@@ -70,7 +71,7 @@ const roleApi = {
     deleteBatch(ids) {
         return request({
             method: "DELETE",
-            url: "/roles",
+            url: "/api/roles",
             data: ids
         });
     },
@@ -80,10 +81,10 @@ const roleApi = {
      * @param roleId
      * @returns {*}
      */
-    getMenus(roleId) {
+    queryMenuById(roleId) {
         return request({
             method: "GET",
-            url: "/roles/" + roleId + "/menus"
+            url: "/api/roles/" + roleId + "/menus"
         });
     },
 
@@ -93,24 +94,13 @@ const roleApi = {
      * @param menusKeys
      * @returns {*}
      */
-    saveRoleMenus(roleId, menusKeys) {
+    createRoleMenus(roleId, menusKeys) {
         return request({
             method: "POST",
-            url: "/roles/" + roleId + "/menus",
+            url: "/api/roles/" + roleId + "/menus",
             data: menusKeys
         });
     },
-
-    /**
-     * 删除redis缓存
-     * @returns {*}
-     */
-    reset() {
-        return request({
-            method: "DELETE",
-            url: "/role/reset"
-        });
-    }
 };
 
 export default roleApi;

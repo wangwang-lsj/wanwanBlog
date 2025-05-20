@@ -1,16 +1,14 @@
 package com.wanwan.springboot.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.wanwan.springboot.common.enums.ResultCodeEnum;
-import com.wanwan.springboot.entity.Comment;
-import com.wanwan.springboot.entity.dto.CommentDTO;
+import com.wanwan.springboot.pojo.po.Comment;
+import com.wanwan.springboot.pojo.dto.CommentDTO;
 import com.wanwan.springboot.exception.ServiceException;
 import com.wanwan.springboot.service.ICommentService;
 import com.wanwan.springboot.mapper.CommentMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,32 +27,32 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     private CommentMapper commentMapper;
 
     @Override
-    public CommentDTO addComment(Comment comment) {
+    public CommentDTO saveComment(Comment comment) {
 
         if (comment.getUserId() == null) {
             throw new ServiceException(ResultCodeEnum.USER_NO_LOGIN);
         }
         commentMapper.insert(comment);
         // 666返回插入id到comment中了
-        return commentMapper.getSingleComment(comment.getId());
+        return commentMapper.selectCommentById(comment.getId());
     }
 
     @Override
-    public IPage<CommentDTO> getCommentListByPage(Integer pageNum, Integer pageSize,Integer articleId,Integer currentUserId) {
+    public IPage<CommentDTO> pageComment(Integer pageNum, Integer pageSize, Integer articleId, Integer currentUserId) {
 
-        return commentMapper.queryPage(new Page<>(pageNum, pageSize),articleId,currentUserId);
+        return commentMapper.selectCommentPageByArticleId(new Page<>(pageNum, pageSize),articleId,currentUserId);
     }
 
     @Override
-    public List<CommentDTO> getReplyListByPage(Integer commentId, Integer startIndex, Integer count, Integer currentUserId) {
-        return commentMapper.queryChildrenByPage(commentId,startIndex,count,currentUserId);
+    public List<CommentDTO> pageSecondComment(Integer commentId, Integer startIndex, Integer count, Integer currentUserId) {
+        return commentMapper.selectCommentPageByCommentId(commentId,startIndex,count,currentUserId);
     }
 
     @Transactional
     @Override
     public void like(Integer commentId, Integer userId) {
-        commentMapper.commentLike(commentId);
-        commentMapper.like(commentId,userId);
+        commentMapper.updateCommentLikeById(commentId,1);
+        commentMapper.insertLikeByCommentIdAndUserId(commentId,userId);
 
 
     }
@@ -62,8 +60,13 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Transactional
     @Override
     public void disLike(Integer commentId, Integer userId) {
-        commentMapper.commentDisLike(commentId);
-        commentMapper.disLike(commentId,userId);
+        commentMapper.updateCommentLikeById(commentId,-1);
+        commentMapper.deleteLikeByCommentIdAndUserId(commentId,userId);
+    }
+
+    @Override
+    public int countComment(Integer articleId) {
+        return commentMapper.selectCommentCountByArticleId(articleId);
     }
 }
 

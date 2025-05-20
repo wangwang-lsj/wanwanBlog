@@ -1,7 +1,7 @@
 package com.wanwan.springboot.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.wanwan.springboot.entity.Files;
+import com.wanwan.springboot.pojo.po.File;
 import org.apache.ibatis.annotations.Mapper;
 
 /**
@@ -10,5 +10,5 @@ import org.apache.ibatis.annotations.Mapper;
  * @description:
  */
 @Mapper
-public interface FileMapper extends BaseMapper<Files> {
+public interface FileMapper extends BaseMapper<File> {
 }

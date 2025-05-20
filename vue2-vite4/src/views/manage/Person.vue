@@ -50,9 +50,11 @@ export default {
   },
   methods:{
     getUser(){
-      userApi.getByName(this.user.username).then((res)=>{
+      userApi.queryByName(this.user.username).then((res)=>{
         if(res.code === '200'){
           this.form = res.data
+        }else {
+          this.$message.error(res.msg)
         }
       })
     },
@@ -60,6 +62,9 @@ export default {
       userApi.saveOrUpdate(this.form).then(res=>{
         if (res.code === '200'){
           this.$emit("refreshUser")
+          this.user.avatarUrl = this.form.avatarUrl
+          this.user.nickname = this.form.nickname
+          localStorage.setItem("user",JSON.stringify(this.user))
           this.$message.success("保存成功");
         }else{
           this.$message.error("保存失败")

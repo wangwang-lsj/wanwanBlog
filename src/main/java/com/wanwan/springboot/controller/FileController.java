@@ -8,8 +8,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wanwan.springboot.common.Result;
-import com.wanwan.springboot.config.AuthAccess;
-import com.wanwan.springboot.entity.Files;
+import com.wanwan.springboot.annotation.AuthAccess;
+import com.wanwan.springboot.pojo.po.File;
 import com.wanwan.springboot.mapper.FileMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
@@ -18,7 +18,6 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.util.List;
@@ -56,12 +55,12 @@ public class FileController {
         String uuid = IdUtil.fastSimpleUUID();
         String fileUUID= uuid + StrUtil.DOT + type;
         // files/文件名
-        File uploadFile = new File(fileUploadPath+fileUUID);
+        java.io.File uploadFile = new java.io.File(fileUploadPath+fileUUID);
         if(!uploadFile.getParentFile().exists()){
             uploadFile.getParentFile().mkdirs();
         }
         String md5 = SecureUtil.md5(file.getInputStream());
-        Files files = getFileByMd5(md5);
+        File files = getFileByMd5(md5);
         String url;
         if(files != null){
             url = files.getUrl();
@@ -72,7 +71,7 @@ public class FileController {
         }
 
         // 存储数据库
-        Files saveFile = new Files();
+        File saveFile = new File();
         saveFile.setName(originalFilename);
         saveFile.setType(type);
         saveFile.setSize(size/1024);
@@ -85,7 +84,7 @@ public class FileController {
     @AuthAccess
     @GetMapping("/{fileUUID}")
     public void download(@PathVariable String fileUUID, HttpServletResponse response)throws IOException{
-        File downloadFile = new File(fileUploadPath+fileUUID);
+        java.io.File downloadFile = new java.io.File(fileUploadPath+fileUUID);
         ServletOutputStream os = response.getOutputStream();
         response.addHeader("Content-Disposition", "attachment;filename="+ URLEncoder.encode(fileUUID,"UTF-8"));
         response.setContentType("application/octet-stream");
@@ -103,60 +102,53 @@ public class FileController {
      * @return
      */
     @GetMapping("/page")
-    public Result page(@RequestParam Integer pageNum,
+    public Result queryPage(@RequestParam Integer pageNum,
                        @RequestParam Integer pageSize,
                        @RequestParam(defaultValue = "") String name
     ) {
-        IPage<Files> page = new Page<>(pageNum,pageSize);
-        QueryWrapper<Files> queryWrapper = new QueryWrapper<>();
+        IPage<File> page = new Page<>(pageNum,pageSize);
+        QueryWrapper<File> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("is_delete",false);
         if(!"".equals(name)){
             queryWrapper.like("name",name);
         }
         queryWrapper.orderByDesc("id");
-        IPage<Files> userIPage = fileMapper.selectPage(page,queryWrapper);
+        IPage<File> userIPage = fileMapper.selectPage(page,queryWrapper);
         return  Result.success(userIPage);
     }
 
-    @PutMapping("/update")
-    public Result update(@RequestBody Files file) {
+    @PutMapping()
+    public Result modify(@RequestBody File file) {
         return Result.success(fileMapper.updateById(file));
     }
     @DeleteMapping("/{id}")
     public Result deleteById(@PathVariable Integer id) {
-        Files files = fileMapper.selectById(id);
-        files.setIsDelete(true);
-        return Result.success(fileMapper.updateById(files));
+        File file = fileMapper.selectById(id);
+        file.setIsDelete(true);
+        return Result.success(fileMapper.updateById(file));
     }
     @DeleteMapping()
     public Result deleteBatch(@RequestBody List<Integer> ids){
-        QueryWrapper<Files> queryWrapper = new QueryWrapper<>();
+        QueryWrapper<File> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("id",ids);
-        List<Files> files = fileMapper.selectList(queryWrapper);
-        for(Files file: files){
+        List<File> files = fileMapper.selectList(queryWrapper);
+        for(File file: files){
             file.setIsDelete(true);
             fileMapper.updateById(file);
         }
         return Result.success();
     }
 
-    @PutMapping()
-    public Result editFileById(@RequestBody Files file){
-        return Result.success(fileMapper.updateById(file));
-    }
-
-
-
     /**
      * 通过md5获取文件
      * @param md5
      * @return
      */
-    private Files getFileByMd5(String md5){
-        QueryWrapper<Files> queryWrapper = new QueryWrapper<>();
+    private File getFileByMd5(String md5){
+        QueryWrapper<File> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("md5", md5);
-        List<Files> filesList = fileMapper.selectList(queryWrapper);
-        return filesList.size()==0?null:filesList.get(0);
+        List<File> fileList = fileMapper.selectList(queryWrapper);
+        return fileList.size()==0?null: fileList.get(0);
     }
 
 

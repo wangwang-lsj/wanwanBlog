@@ -8,11 +8,11 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.wanwan.springboot.common.Constants;
 import com.wanwan.springboot.common.Result;
-import com.wanwan.springboot.config.AuthAccess;
-import com.wanwan.springboot.entity.User;
+import com.wanwan.springboot.annotation.AuthAccess;
+import com.wanwan.springboot.pojo.po.User;
 import com.wanwan.springboot.service.IArticleService;
 import com.wanwan.springboot.service.ICommentService;
-import com.wanwan.springboot.service.ILeaveWordService;
+import com.wanwan.springboot.service.IMessageService;
 import com.wanwan.springboot.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -40,12 +40,12 @@ public class EchartsController {
     @Autowired
     private ICommentService commentService;
     @Autowired
-    private ILeaveWordService leaveWordService;
+    private IMessageService leaveWordService;
     @Autowired
     private StringRedisTemplate stringRedisTemplate;
     @AuthAccess
     @GetMapping("/statistics")
-    public Result statistics() {
+    public Result queryStatistics() {
         Map<String, Object> map = new HashMap<>();
         map.put("userCount",userService.count());
         map.put("articleCount",articleService.count());

@@ -4,7 +4,7 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wanwan.springboot.mapper.SlideshowMapper">
 
-    <resultMap id="BaseResultMap" type="com.wanwan.springboot.entity.Slideshow">
+    <resultMap id="BaseResultMap" type="com.wanwan.springboot.pojo.po.Slideshow">
             <id property="id" column="id" jdbcType="INTEGER"/>
             <result property="url" column="url" jdbcType="VARCHAR"/>
             <result property="sortNum" column="sort_num" jdbcType="INTEGER"/>

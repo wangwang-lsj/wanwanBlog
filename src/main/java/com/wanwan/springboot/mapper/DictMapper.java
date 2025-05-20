@@ -1,7 +1,7 @@
 package com.wanwan.springboot.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.wanwan.springboot.entity.Dict;
+import com.wanwan.springboot.pojo.po.Dict;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

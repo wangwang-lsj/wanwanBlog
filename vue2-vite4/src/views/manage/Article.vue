@@ -28,7 +28,7 @@
       <el-table :data="tableData" :header-cell-class-name="'headerBg'" @selection-change="handleSelectionChange" border stripe>
         <el-table-column type="selection"></el-table-column>
         <el-table-column prop="id" label="ID" width="40"></el-table-column>
-        <el-table-column prop="userName" label="作者">
+        <el-table-column prop="userName" label="作者" width="80">
 
         </el-table-column>
         <el-table-column prop="title" label="标题">
@@ -43,7 +43,7 @@
                 width="400"
                 trigger="click"
                 :content="scope.row.description">
-              <div style="overflow: hidden;text-overflow:ellipsis;white-space: nowrap;" slot="reference">
+              <div class="text-oneLine-omit" slot="reference">
                 {{scope.row.description}}
               </div>
             </el-popover>
@@ -58,8 +58,11 @@
 
         <el-table-column prop="cover" label="封面">
           <template v-slot="scope">
-            <el-image v-if="scope.row.cover" :src="scope.row.cover" :preview-src-list="[scope.row.cover]"></el-image>
-            <el-image v-else :src="require('@/assets/img/暂无图片.jpg')"></el-image>
+            <div style="display: flex;justify-content: center;align-items: center">
+              <el-image v-if="scope.row.cover" :src="scope.row.cover" :preview-src-list="[scope.row.cover]" style="height: 50px"></el-image>
+              <!--<el-image v-else src="/img/noimg.jpg" style="height: 50px"></el-image>-->
+              <img v-else src="/img/noimg.jpg" style="border-radius: 5px;width: 100%"></img>
+            </div>
           </template>
         </el-table-column>
 
@@ -131,7 +134,7 @@
               class="editor"
               ref="wangEditorAdd"
               :content="form.content"
-              @changeData="hChangeHtml"
+              @changeHtml="hChangeHtml"
               v-if="addDialogFormVisible"
             >
             </WangEditor>
@@ -252,19 +255,8 @@
           <el-button type="primary" @click="save">确 定</el-button>
         </div>
       </el-dialog>
-      <el-dialog title="文章信息" :visible.sync="viewDialogFormVisible">
+      <el-dialog title="文章信息" :visible.sync="viewDialogFormVisible" show-close>
         <WangEditor :content="this.content" :editable="false" v-if="viewDialogFormVisible"></WangEditor>
-        <!--<el-card>-->
-        <!--  <mavon-editor-->
-        <!--      class="md"-->
-        <!--      :value="this.content"-->
-        <!--      :subfield="false"-->
-        <!--      :default-open="'preview'"-->
-        <!--      :toolbarsFlag="false"-->
-        <!--      :editable="false"-->
-        <!--      :scroll-style="true"-->
-        <!--      :ishljs="true"/>-->
-        <!--</el-card>-->
       </el-dialog>
     </el-tab-pane>
     <el-tab-pane label="类别管理" name="second">
@@ -311,6 +303,7 @@ export default {
       tagsArr:[],
       content: '',
       reFresh:true,
+      wKey: 1,
     }
   },
   watch:{
@@ -321,7 +314,7 @@ export default {
   },
   methods: {
     load() {
-      articleApi.page({
+      articleApi.queryPage({
         pageNum: this.pageNum,
         pageSize: this.pageSize,
         username: this.userName,
@@ -331,9 +324,11 @@ export default {
         if (res.code === '200') {
           this.tableData = res.data.records
           this.total = res.data.total
+        }else {
+          this.$message.error(res.msg)
         }
       })
-      categoryApi.getAll().then(res => {
+      categoryApi.queryAll().then(res => {
         if (res.code === '200') {
           this.categoryList = res.data
         }
@@ -350,6 +345,18 @@ export default {
       this.tagsArr = []
       this.form = {}
       this.addDialogFormVisible = true
+    },
+    handleEdit(row) {
+      this.tagsArr = JSON.parse(row.tags || '[]')
+      this.editDialogFormVisible = true
+      this.form = row
+    },
+    view(content) {
+      this.content = content
+      this.viewDialogFormVisible = true
+    },
+    reFreshKey(){
+      this.wKey++;
     },
     add() {
       this.form.tags = JSON.stringify(this.tagsArr)
@@ -369,14 +376,10 @@ export default {
     handleSelectionChange(val) {
       this.multipleSelection = val
     },
-    handleEdit(row) {
-      this.tagsArr = JSON.parse(row.tags || '[]')
-      this.editDialogFormVisible = true
-      this.form = row
-    },
+
     save() {
       this.form.tags = JSON.stringify(this.tagsArr)
-      articleApi.save(this.form).then(res => {
+      articleApi.modify(this.form).then(res => {
         if (res.code === '200') {
           this.$message.success("保存成功");
           this.editDialogFormVisible = false
@@ -398,6 +401,10 @@ export default {
     },
     handleDeleteBatch() {
       let ids = this.multipleSelection.map(v => v.id)
+      if(ids.length === 0){
+        this.$message.error("请选择要删除的数据")
+        return
+      }
       articleApi.deleteBatch(ids).then(res => {
         if (res.code === '200') {
           this.$message.success("批量删除成功");
@@ -413,6 +420,7 @@ export default {
       this.load()
     },
     handleCurrentChange(pageNum) {
+      this.tableData = []
       this.pageNum = pageNum
       this.load()
     },
@@ -433,34 +441,6 @@ export default {
       }
       return (isJPG || isPNG || isGIF) && isLt10M;
     },
-    // 绑定@imgAdd event
-    // imgAdd(pos, $file) {
-    //   let $vm = this.$refs.md
-    //   // 第一步.将图片上传到服务器.
-    //   const formData = new FormData();
-    //   formData.append('file', $file);
-    //   axios({
-    //     url: `http://${serverIp}:9090/file/upload`,
-    //     method: 'post',
-    //     data: formData,
-    //     headers: {'Content-Type': 'multipart/form-data'},
-    //   }).then((res) => {
-    //     console.log(res)
-    //     // 第二步.将返回的url替换到文本原位置![...](./0) -> ![...](url)
-    //     /**
-    //      * $vm 指为mavonEditor实例，可以通过如下两种方式获取
-    //      * 1. 通过引入对象获取: `import {mavonEditor} from ...` 等方式引入后，
-    //      * `$vm`为`mavonEditor`
-    //      * 2. 通过$refs获取: html声明ref : `<mavon-editor ref=md ></mavon-editor>，
-    //      * `$vm`为 `this.$refs.md`
-    //      */
-    //     $vm.$img2Url(pos, res.data);
-    //   })
-    // },
-    view(content) {
-      this.content = content
-      this.viewDialogFormVisible = true
-    },
     //获取到富文本编辑器的内容
     hChangeHtml(editDataHtml) {
       // console.log(editDataHtml);
@@ -469,7 +449,7 @@ export default {
       // console.log(this.content);
     },
     changeHomeShow(row){
-      articleApi.changeHomeShow(row.id,row.homeShow).then(res => {
+      articleApi.updateHomeShow(row.id,row.homeShow).then(res => {
         if (res.code === '200'){
           this.$message.success("操作成功");
         }else {
@@ -477,6 +457,9 @@ export default {
         }
         this.load()
       })
+    },
+    getAssetsFile(fileUrl){
+      return new URL(`../../assets/img/${fileUrl}`, import.meta.url).href
     }
   }
 }

@@ -4,6 +4,7 @@ import { resolve } from 'path';
 import requireTransform from 'vite-plugin-require-transform';
 import commonjs from '@rollup/plugin-commonjs';
 import vue from '@vitejs/plugin-vue2'
+import inject from "@rollup/plugin-inject";
 export default defineConfig({
      //项目根目录（index.html 文件所在的位置） 默认： process.cwd()
     base: '/', //  开发或生产环境服务的公共基础路径：默认'/'   1、绝对 URL 路径名： /foo/；  2、完整的 URL： https://foo.com/； 3、空字符串或 ./（用于开发环境）
@@ -16,6 +17,10 @@ export default defineConfig({
         // requireTransform({
         //     fileRegex:/.js$|.jsx$|.vue$/  // 使用正则表达式匹配需要作用的文件
         // }),
+        inject({
+            $: 'jquery',
+            jQuery: 'jquery',
+        }),
 
     ],
     /*****配置项目的构建过程******/
@@ -82,6 +87,7 @@ export default defineConfig({
 
         /****配置 esbuild 相关的选项******/
         esbuild: {
+            drop: ["console", "debugger"],
             // 自定义 JSX 配置
             jsxFactory: 'h', //自定义的 JSX 工厂函数为 h，这在一些非 React 框架中可能会用到。
             jsxFragment: 'Fragment', //指定了 JSX 的 Fragment 为 Fragment

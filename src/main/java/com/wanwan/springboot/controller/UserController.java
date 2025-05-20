@@ -7,22 +7,23 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.poi.excel.ExcelReader;
 import cn.hutool.poi.excel.ExcelUtil;
 import cn.hutool.poi.excel.ExcelWriter;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.wanwan.springboot.common.Constants;
 import com.wanwan.springboot.common.Result;
 import com.wanwan.springboot.common.enums.ResultCodeEnum;
-import com.wanwan.springboot.config.AuthAccess;
-import com.wanwan.springboot.entity.User;
-import com.wanwan.springboot.entity.dto.UserDTO;
-import com.wanwan.springboot.entity.dto.UserPasswordDTO;
+import com.wanwan.springboot.annotation.AuthAccess;
+import com.wanwan.springboot.pojo.po.User;
+import com.wanwan.springboot.pojo.dto.UserDTO;
+import com.wanwan.springboot.pojo.dto.UserPasswordDTO;
 import com.wanwan.springboot.service.IUserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
+import com.wanwan.springboot.utils.JWTUtils;
+import com.wanwan.springboot.utils.RedisUtil;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -42,8 +43,6 @@ import java.util.List;
 public class UserController {
     @Resource
     private IUserService userService;
-    @Autowired
-    private StringRedisTemplate stringRedisTemplate;
 
     /**
      * 用户注册
@@ -78,6 +77,20 @@ public class UserController {
         UserDTO dto = userService.login(userDto);
         return Result.success(dto);
     }
+    @PostMapping("/users/bindemail")
+    public Result bindEmail(HttpServletRequest request, @RequestParam String email, @RequestParam String code) {
+        String token = request.getHeader("token");
+        DecodedJWT decodedJWT = JWTUtils.getToken(token);
+        String userId = decodedJWT.getClaim("userId").asString();
+
+        String emailCodeKey = "email_code:"+email;
+        String emailCode = RedisUtil.get(emailCodeKey, String.class);
+        if(code.equals(emailCode)) {
+            return Result.success(userService.bindEmail(userId,email));
+        }else {
+            return Result.error(ResultCodeEnum.USER_EMAIL_CODE_ERROR);
+        }
+    }
 
     /**
      * 按条件分页查询
@@ -91,7 +104,7 @@ public class UserController {
      * @return Map<String,Object>
      */
     @GetMapping("/users/page")
-    public Result page(@RequestParam Integer pageNum,
+    public Result queryPage(@RequestParam Integer pageNum,
                        @RequestParam Integer pageSize,
                        @RequestParam(defaultValue = "") String username,
                        @RequestParam(defaultValue = "") String nickname,
@@ -99,20 +112,27 @@ public class UserController {
                        @RequestParam(defaultValue = "") String phone,
                        @RequestParam(defaultValue = "") String email
     ) {
-        return Result.success(userService.findByPageOrSearch(pageNum, pageSize, username, nickname, address, phone, email));
+        return Result.success(userService.pageUserByCondition(pageNum, pageSize, username, nickname, address, phone, email));
     }
 
     /**
-     * 保存或更新用户
+     * 新增用户
      * @param user
      * @return Boolean
      */
     @PostMapping("/users")
-    public Result saveOrUpdate(@RequestBody User user) {
-        stringRedisTemplate.delete(Constants.USER_KEY);
-        return Result.success(userService.saveOrUpdate(user));
+    public Result create(@RequestBody User user) {
+        return Result.success(userService.saveUser(user));
     }
-
+    /**
+     * 修改用户
+     * @param user
+     * @return Boolean
+     */
+    @PutMapping("/users")
+    public Result modify(@RequestBody User user) {
+        return Result.success(userService.updateUser(user));
+    }
     /**
      * 通过id删除
      * @param id
@@ -120,7 +140,6 @@ public class UserController {
      */
     @DeleteMapping("/users/{id}")
     public Result deleteById(@PathVariable Integer id) {
-        stringRedisTemplate.delete(Constants.USER_KEY);
         return Result.success(userService.removeById(id));
     }
 
@@ -131,7 +150,6 @@ public class UserController {
      */
     @DeleteMapping("/users")
     public Result deleteBatch(@RequestBody List<Integer> ids) {
-        stringRedisTemplate.delete(Constants.USER_KEY);
         return Result.success(userService.removeBatchByIds(ids));
     }
 
@@ -140,8 +158,8 @@ public class UserController {
      * @param userPasswordDTO
      * @return 异常返回数据
      */
-    @PutMapping("/users")
-    public Result password(@RequestBody UserPasswordDTO userPasswordDTO) {
+    @PatchMapping("/users")
+    public Result modifyPassword(@RequestBody UserPasswordDTO userPasswordDTO) {
         userService.updatePassword(userPasswordDTO);
         return Result.success();
     }
@@ -152,7 +170,7 @@ public class UserController {
      * @return user
      */
     @GetMapping("/users/{username}")
-    public Result getByName(@PathVariable String username) {
+    public Result queryByName(@PathVariable String username) {
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", username);
         User one = userService.getOne(queryWrapper);
@@ -174,14 +192,6 @@ public class UserController {
     //     return Result.success(userService.list(queryWrapper));
     // }
 
-    /**
-     * 重置redis缓存
-     * @return Boolean
-     */
-    @DeleteMapping("/users/reset")
-    public Result reset() {
-        return Result.success(stringRedisTemplate.delete(Constants.USER_KEY));
-    }
 
     /**
      * 导出用户表为excel
@@ -241,7 +251,6 @@ public class UserController {
             user.setAvatarUrl(list.get(6).toString());
             userList.add(user);
         }
-        stringRedisTemplate.delete(Constants.USER_KEY);
         return Result.success(userService.saveBatch(userList));
     }
 

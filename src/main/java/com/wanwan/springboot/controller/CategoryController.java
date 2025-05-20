@@ -5,13 +5,11 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wanwan.springboot.common.Result;
-import com.wanwan.springboot.config.AuthAccess;
-import com.wanwan.springboot.entity.dto.MyRequestBody;
-import javafx.beans.DefaultProperty;
+import com.wanwan.springboot.annotation.AuthAccess;
 import org.springframework.web.bind.annotation.*;
 
 import com.wanwan.springboot.service.ICategoryService;
-import com.wanwan.springboot.entity.Category;
+import com.wanwan.springboot.pojo.po.Category;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -32,17 +30,17 @@ public class CategoryController {
 
     @AuthAccess
     @GetMapping()
-    public Result getAll() {
+    public Result queryAll() {
         return Result.success(categoryService.list());
     }
 
-    @GetMapping("/{id}")
-    public Result getById(@PathVariable Integer id) {
-        return Result.success(categoryService.getById(id));
-    }
+    // @GetMapping("/{id}")
+    // public Result queryById(@PathVariable Integer id) {
+    //     return Result.success(categoryService.getById(id));
+    // }
 
     @GetMapping ("/page")
-    public Result page(@RequestParam Integer pageNum,
+    public Result queryPage(@RequestParam Integer pageNum,
                        @RequestParam Integer pageSize,
                        @RequestParam String name
                        ) {
@@ -52,11 +50,14 @@ public class CategoryController {
         }
         return Result.success(categoryService.page(new Page<>(pageNum, pageSize), queryWrapper));
     }
-    // 新增或者更新
     @PostMapping
-    public Result saveOrUpdate(@RequestBody Category category) {
-        categoryService.saveOrUpdate(category);
-        return Result.success();
+    public Result create(@RequestBody Category category){
+        return Result.success(categoryService.saveCategory(category));
+    }
+    // 新增或者更新
+    @PutMapping
+    public Result modify(@RequestBody Category category) {
+        return Result.success(categoryService.updateCategory(category));
     }
 
     @DeleteMapping("/{id}")

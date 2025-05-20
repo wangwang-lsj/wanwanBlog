@@ -9,7 +9,7 @@ import './assets/css/gloable.css'
 import request from "@/utils/request"
 import store from "@/store";
 import validator from 'validator';
-
+import $ from  'jquery'
 
 import Viewer from 'v-viewer'
 import 'viewerjs/dist/viewer.css'

@@ -116,6 +116,9 @@ export default {
         if (valid) {
           userApi.login(this.loginForm).then(res=>{
             if(res.code === "200"){
+              if(res.data.avatarUrl === null){
+                res.data.avatarUrl = "/steve.png"
+              }
               //res是对象
               localStorage.setItem("user",JSON.stringify(res.data))
               localStorage.setItem("menus",JSON.stringify(res.data.menus))

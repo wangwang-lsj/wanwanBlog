@@ -71,7 +71,7 @@
     <!--  </el-pagination>-->
     <!--</div>-->
 
-    <el-dialog title="轮播图信息" :visible.sync="dialogFormVisible" width="20%">
+    <el-dialog title="创建轮播图" :visible.sync="createFormVisible" width="20%">
       <el-form label-width="80px" size="small">
         <el-form-item label="名称" >
           <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -84,8 +84,25 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="save">确 定</el-button>
+        <el-button @click="createFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="create">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="修改轮播图" :visible.sync="modifyFormVisible" width="20%">
+      <el-form label-width="80px" size="small">
+        <el-form-item label="名称" >
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="地址" >
+          <el-input v-model="form.url" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="顺序" >
+          <el-input v-model="form.sortNum" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="modifyFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="modify">确 定</el-button>
       </div>
     </el-dialog>
   </div>
@@ -99,7 +116,8 @@ export default {
   data() {
     return {
       tableData: [],
-      dialogFormVisible: false,
+      createFormVisible: false,
+      modifyFormVisible: false,
       multipleSelection: [],
       form: {},
       name: '',
@@ -110,9 +128,11 @@ export default {
   },
   methods: {
     load(){
-      homeApi.getAll("manage").then(res=>{
+      homeApi.queryAll("manage").then(res=>{
         if(res.code=== '200'){
           this.tableData = res.data
+        }else {
+          this.$message.error(res.msg)
         }
       })
     },
@@ -121,14 +141,14 @@ export default {
       this.load()
     },
     handleAdd(){
-      this.dialogFormVisible = true
+      this.createFormVisible = true
       this.form = {}
     },
     handleSelectionChange(val){
       this.multipleSelection = val
     },
     handleEdit(row){
-      this.dialogFormVisible = true
+      this.modifyFormVisible = true
       this.form = row
     },
     handleDelete(id){
@@ -143,6 +163,10 @@ export default {
     },
     handleDeleteBatch(){
       let ids = this.multipleSelection.map(v => v.id)
+      if(ids.length === 0){
+        this.$message.error("请选择要删除的数据")
+        return
+      }
       homeApi.deleteBatch(ids).then(res=>{
         if (res.code === '200'){
           this.$message.success("批量删除成功");
@@ -152,11 +176,22 @@ export default {
         this.load()
       })
     },
-    save(){
-      homeApi.saveOrUpdate(this.form).then(res=>{
+    create(){
+      homeApi.create(this.form).then(res=>{
         if (res.code === '200'){
           this.$message.success("添加成功");
-          this.dialogFormVisible=false
+          this.createFormVisible=false
+        }else{
+          this.$message.error("添加失败")
+        }
+        this.load()
+      })
+    },
+    modify(){
+      homeApi.modify(this.form).then(res=>{
+        if (res.code === '200'){
+          this.$message.success("添加成功");
+          this.modifyFormVisible=false
         }else{
           this.$message.error("添加失败")
         }
@@ -164,13 +199,12 @@ export default {
       })
     },
     changeEnable(row){
-      homeApi.show({
+      homeApi.updateShow({
         id: row.id,
         enable: row.enable
       }).then(res=>{
         if (res.code === '200'){
           this.$message.success("操作成功");
-          this.dialogFormVisible=false
         }else{
           this.$message.error("操作失败")
         }

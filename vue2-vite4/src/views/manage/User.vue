@@ -3,8 +3,8 @@
     <div style="margin: 10px 0">
       <el-input style="width: 200px;margin-right: 10px" placeholder="请输入用户名" prefix-icon="el-icon-search" v-model="username"></el-input>
       <el-input style="width: 200px;margin-right: 10px" placeholder="请输入昵称" prefix-icon="el-icon-search" v-model="nickname"></el-input>
-      <el-input style="width: 200px;margin-right: 10px" placeholder="请输入邮箱" prefix-icon="el-icon-message" v-model="email"></el-input>
-      <el-input style="width: 200px;margin-right: 10px" placeholder="请输入手机号" prefix-icon="el-icon-message" v-model="phone"></el-input>
+      <el-input style="width: 200px;margin-right: 10px" placeholder="请输入邮箱" prefix-icon="el-icon-messageApi" v-model="email"></el-input>
+      <el-input style="width: 200px;margin-right: 10px" placeholder="请输入手机号" prefix-icon="el-icon-messageApi" v-model="phone"></el-input>
       <el-input style="width: 200px;margin-right: 10px" placeholder="请输入地址" prefix-icon="el-icon-position" v-model="address"></el-input>
       <el-button style="margin-left: 5px" type="primary" @click="load">搜索</el-button>
       <el-button style="margin-left: 5px" type="warning" @click="reset">重置</el-button>
@@ -139,7 +139,7 @@ export default {
   },
   methods:{
     load(){
-      userApi.page({
+      userApi.queryPage({
           pageNum:this.pageNum,
           pageSize:this.pageSize,
           username:this.username,
@@ -151,11 +151,13 @@ export default {
         if(res.code==='200'){
           this.tableData = res.data.records
           this.total = res.data.total
+        }else {
+          this.$message.error(res.msg)
         }
       }).catch((error)=>{
         console.log(error)
       })
-      roleApi.getRoles().then(res=>{
+      roleApi.queryRoles().then(res=>{
         if(res.code==='200'){
           this.roles = res.data
         }
@@ -169,15 +171,14 @@ export default {
       this.email=""
       this.phone=""
       this.address=""
-      userApi.reset()
       this.load()
-
     },
     handleSizeChange(pageSize) {
       this.pageSize=pageSize
       this.load()
     },
     handleCurrentChange(pageNum) {
+      this.tableData = []
       this.pageNum=pageNum
       this.load()
     },
@@ -217,6 +218,10 @@ export default {
     },
     handleDeleteBatch(){
       let ids = this.multipleSelection.map(v => v.id)
+      if(ids.length === 0){
+        this.$message.error("请选择要删除的数据")
+        return
+      }
       userApi.deleteBatch(ids).then(res=>{
         if (res.code === '200'){
           this.$message.success("批量删除成功");

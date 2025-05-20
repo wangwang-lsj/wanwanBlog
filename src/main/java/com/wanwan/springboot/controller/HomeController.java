@@ -1,14 +1,11 @@
 package com.wanwan.springboot.controller;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.wanwan.springboot.common.Result;
-import com.wanwan.springboot.config.AuthAccess;
-import com.wanwan.springboot.entity.Slideshow;
-import com.wanwan.springboot.mapper.SlideshowMapper;
+import com.wanwan.springboot.annotation.AuthAccess;
+import com.wanwan.springboot.pojo.po.Slideshow;
 import com.wanwan.springboot.service.IArticleService;
 import com.wanwan.springboot.service.ISlideshowService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -32,32 +29,34 @@ public class HomeController {
     public Result getAll(@RequestHeader(name = "Wan-Source", required = false) String WanSource){
         QueryWrapper<Slideshow> queryWrapper = new QueryWrapper<>();
         if (Objects.equals(WanSource, "manage")) {
-            return Result.success(slideshowService.sliderList());
+            return Result.success(slideshowService.listSlider());
         }
         queryWrapper.eq("enable", true);
-        return Result.success(slideshowService.enableSliderList());
+        return Result.success(slideshowService.listEnableSlider());
     }
     @AuthAccess
     @GetMapping("/articles")
     public Result getHomeArticles(){
-        return Result.success(articleService.getHomeArticle());
+        return Result.success(articleService.listHomeArticle());
     }
     @PostMapping("/slider")
-    public Result saveOrUpdate(@RequestBody Slideshow slideshow){
-        return Result.success(slideshowService.saveOrUpdateSlider(slideshow));
+    public Result create(@RequestBody Slideshow slideshow){
+        return Result.success(slideshowService.saveSlider(slideshow));
+    }
+    @PutMapping("/slider")
+    public Result modify(@RequestBody Slideshow slideshow){
+        return Result.success(slideshowService.updateSlider(slideshow));
     }
     @DeleteMapping("/slider/{id}")
     public Result deleteById(@PathVariable Integer id){
-        return Result.success(slideshowService.removeSliderById(id));
+        return Result.success(slideshowService.removeSlider(id));
     }
     @DeleteMapping("/slider")
     public Result deleteBatch(@RequestBody List<Integer> ids){
-        return Result.success(slideshowService.removeSliderByIds(ids));
+        return Result.success(slideshowService.removeSliders(ids));
     }
     @PatchMapping("/slider")
-    public Result show(@RequestBody Slideshow slideshow){
-        return Result.success(slideshowService.enableSlider(slideshow));
+    public Result updateShow(@RequestBody Slideshow slideshow){
+        return Result.success(slideshowService.updateSliderEnable(slideshow));
     }
-
-
 }

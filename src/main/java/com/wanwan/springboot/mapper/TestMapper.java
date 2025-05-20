@@ -1,7 +1,7 @@
 package com.wanwan.springboot.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.wanwan.springboot.entity.TestModel;
+import com.wanwan.springboot.pojo.po.TestModel;
 import org.apache.ibatis.annotations.Mapper;
 
 /**

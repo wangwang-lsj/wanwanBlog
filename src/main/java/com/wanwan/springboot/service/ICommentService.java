@@ -1,9 +1,9 @@
 package com.wanwan.springboot.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.wanwan.springboot.entity.Comment;
+import com.wanwan.springboot.pojo.po.Comment;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.wanwan.springboot.entity.dto.CommentDTO;
+import com.wanwan.springboot.pojo.dto.CommentDTO;
 
 import java.util.List;
 
@@ -14,13 +14,14 @@ import java.util.List;
 */
 public interface ICommentService extends IService<Comment> {
 
-    CommentDTO addComment(Comment comment);
-    IPage<CommentDTO> getCommentListByPage(Integer pageNum, Integer pageSize,Integer articleId,Integer currentUserId);
+    CommentDTO saveComment(Comment comment);
+    IPage<CommentDTO> pageComment(Integer pageNum, Integer pageSize, Integer articleId, Integer currentUserId);
 
     void like(Integer commentId, Integer userId);
     void disLike(Integer commentId, Integer userId);
 
 
-    List<CommentDTO> getReplyListByPage(Integer commentId, Integer startIndex, Integer count,Integer currentUserId);
+    List<CommentDTO> pageSecondComment(Integer commentId, Integer startIndex, Integer count, Integer currentUserId);
 
+    int countComment(Integer articleId);
 }

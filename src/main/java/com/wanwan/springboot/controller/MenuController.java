@@ -2,23 +2,19 @@ package com.wanwan.springboot.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.wanwan.springboot.common.Constants;
 import com.wanwan.springboot.common.Result;
-import com.wanwan.springboot.entity.Dict;
+import com.wanwan.springboot.pojo.po.Dict;
 import com.wanwan.springboot.mapper.DictMapper;
 import com.wanwan.springboot.mapper.MenuMapper;
-import com.wanwan.springboot.service.IUserService;
 import com.wanwan.springboot.service.impl.UserServiceImpl;
 import org.springframework.web.bind.annotation.*;
 
 import com.wanwan.springboot.service.IMenuService;
-import com.wanwan.springboot.entity.Menu;
+import com.wanwan.springboot.pojo.po.Menu;
 
 import javax.annotation.Resource;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * <p>
@@ -33,38 +29,6 @@ import java.util.stream.Collectors;
 public class MenuController {
     @Resource
     private IMenuService menuService;
-    @Resource
-    private MenuMapper menuMapper;
-    @Resource
-    private DictMapper dictMapper;
-    @Resource
-    private UserServiceImpl userService;
-
-    /**
-     * 分页获取菜单列表(弃用）
-     * @param pageNum
-     * @param pageSize
-     * @param name
-     * @return Page
-     */
-    @GetMapping("/menus/page")
-    public Result page(@RequestParam Integer pageNum,
-                       @RequestParam Integer pageSize,
-                       @RequestParam(defaultValue = "") String name
-    ) {
-        return Result.success();
-    }
-
-    /**
-     * 获取所有菜单图标
-     * @return List<Dict>
-     */
-    @GetMapping("/menus/icons")
-    public Result getIcons() {
-        QueryWrapper<Dict> queryWrapper = new QueryWrapper<Dict>();
-        queryWrapper.eq("type", Constants.DICT_TYPE_ICON);
-        return Result.success(dictMapper.selectList(queryWrapper));
-    }
 
     /**
      * 根据菜单名名获取菜单(搜索菜单)
@@ -72,31 +36,39 @@ public class MenuController {
      * @return List<Menu>
      */
     @GetMapping("/menus")
-    public Result getByName(@RequestParam(defaultValue = "") String name) {
-        return Result.success(menuService.selectMenus(name));
+    public Result queryByName(@RequestParam(defaultValue = "") String name) {
+        return Result.success(menuService.listMenu(name));
     }
 
     /**
-     * 通过id获取菜单
-     * @param id
-     * @return Menu
+     * 获取所有菜单图标
+     * @return List<Dict>
      */
-    @GetMapping("/menus/{id}")
-    public Result getById(@PathVariable Integer id) {
-        return Result.success(menuService.getById(id));
-    }
+    @GetMapping("/menus/icons")
+    public Result queryIcons() {
 
+        return Result.success(menuService.listIcon());
+    }
     /**
-     * 新增或更改菜单
+     * 新增菜单
      * @param menu
      * @return Boolean
      */
     // 新增或者更新
     @PostMapping("/menus")
-    public Result saveOrUpdate(@RequestBody Menu menu) {
-        return Result.success(menuService.saveOrUpdate(menu));
+    public Result create(@RequestBody Menu menu) {
+        return Result.success(menuService.saveMenu(menu));
     }
-
+    /**
+     * 更改菜单
+     * @param menu
+     * @return Boolean
+     */
+    // 新增或者更新
+    @PutMapping("/menus")
+    public Result modify(@RequestBody Menu menu) {
+        return Result.success(menuService.updateMenu(menu));
+    }
     /**
      * 删除菜单
      * @param id

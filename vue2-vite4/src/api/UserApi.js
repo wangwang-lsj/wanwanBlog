@@ -11,7 +11,7 @@ const userApi = {
     register(data) {
         return request({
             method: "POST",
-            url: "/users/register",
+            url: "/api/users/register",
             data
         });
     },
@@ -24,7 +24,7 @@ const userApi = {
     login(data) {
         return request({
             method: "POST",
-            url: "/users/login",
+            url: "/api/users/login",
             data
         });
     },
@@ -34,23 +34,35 @@ const userApi = {
      * @param params
      * @returns {*}
      */
-    page(params) {
+    queryPage(params) {
         return request({
             method: "GET",
-            url: "/users/page",
+            url: "/api/users/page",
             params
         });
     },
 
     /**
-     * 新建用户或修改用户
+     * 新建用户
      * @param data
      * @returns {*}
      */
-    saveOrUpdate(data) {
+    create(data) {
         return request({
             method: "POST",
-            url: "/users",
+            url: "/api/users",
+            data
+        });
+    },
+    /**
+     * 修改用户
+     * @param data
+     * @returns {*}
+     */
+    modify(data) {
+        return request({
+            method: "PUT",
+            url: "/api/users",
             data
         });
     },
@@ -63,7 +75,7 @@ const userApi = {
     deleteById(id) {
         return request({
             method: "DELETE",
-            url: "/users/" + id
+            url: "/api/users/" + id
         });
     },
 
@@ -75,7 +87,7 @@ const userApi = {
     deleteBatch(data) {
         return request({
             method: "DELETE",
-            url: "/users",
+            url: "/api/users",
             data
         });
     },
@@ -85,10 +97,10 @@ const userApi = {
      * @param data
      * @returns {*}
      */
-    password(data) {
+    modifyPassword(data) {
         return request({
-            method: "PUT",
-            url: "/users",
+            method: "PATCH",
+            url: "/api/users",
             data
         });
     },
@@ -98,21 +110,10 @@ const userApi = {
      * @param username
      * @returns {*}
      */
-    getByName(username) {
+    queryByName(username) {
         return request({
             method: "GET",
-            url: "/users/" + username
-        });
-    },
-
-    /**
-     * 重置redis缓存
-     * @returns {*}
-     */
-    reset() {
-        return request({
-            method: "DELETE",
-            url: "/users/reset"
+            url: "/api/users/" + username
         });
     },
 

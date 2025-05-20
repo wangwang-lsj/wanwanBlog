@@ -1,6 +1,6 @@
 package com.wanwan.springboot.service;
 
-import com.wanwan.springboot.entity.Category;
+import com.wanwan.springboot.pojo.po.Category;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 /**
@@ -13,4 +13,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface ICategoryService extends IService<Category> {
 
+    boolean saveCategory(Category category);
+
+    int updateCategory(Category category);
 }

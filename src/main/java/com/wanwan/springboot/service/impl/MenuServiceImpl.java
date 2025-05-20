@@ -2,12 +2,16 @@ package com.wanwan.springboot.service.impl;
 
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.wanwan.springboot.entity.Menu;
+import com.wanwan.springboot.common.Constants;
+import com.wanwan.springboot.mapper.DictMapper;
+import com.wanwan.springboot.pojo.po.Dict;
+import com.wanwan.springboot.pojo.po.Menu;
 import com.wanwan.springboot.mapper.MenuMapper;
 import com.wanwan.springboot.service.IMenuService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,8 +25,12 @@ import java.util.stream.Collectors;
  */
 @Service
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IMenuService {
+    @Resource
+    private MenuMapper menuMapper;
+    @Resource
+    private DictMapper dictMapper;
     @Override
-    public List<Menu> selectMenus(String name) {
+    public List<Menu> listMenu(String name) {
         QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
         if(StrUtil.isNotBlank(name)){
             queryWrapper.like("name",name);
@@ -38,5 +46,22 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements IM
             menu.setChildren(list.stream().filter(m -> menu.getId().equals(m.getPid())).collect(Collectors.toList()));
         }
         return parentNodes;
+    }
+
+    @Override
+    public boolean saveMenu(Menu menu) {
+        return save(menu);
+    }
+
+    @Override
+    public int updateMenu(Menu menu) {
+        return menuMapper.updateById(menu);
+    }
+
+    @Override
+    public List<Dict> listIcon() {
+        QueryWrapper<Dict> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("type", Constants.DICT_TYPE_ICON);
+        return dictMapper.selectList(queryWrapper);
     }
 }

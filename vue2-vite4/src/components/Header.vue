@@ -19,18 +19,28 @@
         </div>
       </div>
       <el-dropdown-menu slot="dropdown" style="width: 100px; text-align: center; ">
-        <el-dropdown-item style="font-size: 14px; padding: 5px 0">
-          <router-link to="/manage/person">个人信息</router-link>
-        </el-dropdown-item>
-        <el-dropdown-item style="font-size: 14px; padding: 5px 0">
-          <router-link to="/manage/password">修改密码</router-link>
-        </el-dropdown-item>
-        <el-dropdown-item style="font-size: 14px; padding: 5px 0">
-          <router-link to="/home">前往主页</router-link>
-        </el-dropdown-item>
-        <el-dropdown-item style="font-size: 14px; padding: 5px 0">
-          <span @click="logout" style="text-decoration: none">退出</span>
-        </el-dropdown-item>
+        <router-link to="/manage/person">
+          <el-dropdown-item style="font-size: 14px; padding: 5px 0">
+            个人信息
+          </el-dropdown-item>
+        </router-link>
+        <router-link to="/manage/password">
+          <el-dropdown-item style="font-size: 14px; padding: 5px 0">
+            修改密码
+          </el-dropdown-item>
+        </router-link>
+
+        <router-link to="/home">
+          <el-dropdown-item style="font-size: 14px; padding: 5px 0">
+            前往主页
+          </el-dropdown-item>
+        </router-link>
+
+        <span @click="logout" style="text-decoration: none">
+          <el-dropdown-item style="font-size: 14px; padding: 5px 0">
+            退出
+          </el-dropdown-item>
+        </span>
       </el-dropdown-menu>
     </el-dropdown>
   </div>

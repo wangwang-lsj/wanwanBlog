@@ -5,10 +5,10 @@ const echartsApi = {
      * 获取统计数据
      * @returns {*}
      */
-    statistics() {
+    queryStatistics() {
         return request({
             method: "GET",
-            url: "/echarts/statistics"
+            url: "/api/echarts/statistics"
         });
     },
 
@@ -19,7 +19,7 @@ const echartsApi = {
     example() {
         return request({
             method: "GET",
-            url: "/echarts/example"
+            url: "/api/echarts/example"
         });
     },
 
@@ -30,7 +30,7 @@ const echartsApi = {
     members() {
         return request({
             method: "GET",
-            url: "/echarts/members"
+            url: "/api/echarts/members"
         });
     }
 };

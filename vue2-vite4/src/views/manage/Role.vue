@@ -56,7 +56,7 @@
           :total="total">
       </el-pagination>
     </div>
-    <el-dialog title="角色信息" :visible.sync="dialogFormVisible" width="20%">
+    <el-dialog title="新增角色" :visible.sync="createFormVisible" width="20%">
       <el-form label-width="80px" size="small">
         <el-form-item label="名称" >
           <el-input v-model="form.name" autocomplete="off"></el-input>
@@ -69,8 +69,25 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click="dialogFormVisible = false">取 消</el-button>
-        <el-button type="primary" @click="save">确 定</el-button>
+        <el-button @click="createFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="create">确 定</el-button>
+      </div>
+    </el-dialog>
+    <el-dialog title="修改角色" :visible.sync="modifyFormVisible" width="20%">
+      <el-form label-width="80px" size="small">
+        <el-form-item label="名称" >
+          <el-input v-model="form.name" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="唯一标识" >
+          <el-input v-model="form.flag" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="描述" >
+          <el-input v-model="form.description" autocomplete="off"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="modifyFormVisible = false">取 消</el-button>
+        <el-button type="primary" @click="modify">确 定</el-button>
       </div>
     </el-dialog>
     <el-dialog title="菜单分配" :visible.sync="menuDialogVisible" width="20%">
@@ -108,7 +125,8 @@ export default {
       pageNum: 1,
       pageSize: 10,
       name: "",
-      dialogFormVisible: false,
+      createFormVisible: false,
+      modifyFormVisible: false,
       menuDialogVisible: false,
       form:{},
       multipleSelection:[],
@@ -127,7 +145,7 @@ export default {
   },
   methods:{
     load(){
-      roleApi.page({
+      roleApi.queryPage({
         pageNum:this.pageNum,
         pageSize:this.pageSize,
         name: this.name
@@ -135,19 +153,31 @@ export default {
         if(res.code==='200'){
           this.tableData = res.data.records
           this.total = res.data.total
+        }else {
+          this.$message.error(res.msg)
         }
       })
     },
     reset(){
       this.name=""
-      roleApi.reset()
       this.load()
     },
-    save(){
-      roleApi.saveOrUpdate(this.form).then(res=>{
+    create(){
+      roleApi.create(this.form).then(res=>{
         if (res.code === '200'){
           this.$message.success("添加成功");
-          this.dialogFormVisible=false
+          this.createFormVisible=false
+        }else{
+          this.$message.error("添加失败")
+        }
+        this.load()
+      })
+    },
+    modify(){
+      roleApi.modify(this.form).then(res=>{
+        if (res.code === '200'){
+          this.$message.success("添加成功");
+          this.modifyFormVisible=false
         }else{
           this.$message.error("添加失败")
         }
@@ -163,13 +193,13 @@ export default {
       this.load()
     },
     handleAdd(){
-      this.dialogFormVisible=true
+      this.createFormVisible=true
       this.form={}
     },
 
     handleEdit(row){
       this.form = row
-      this.dialogFormVisible = true
+      this.modifyFormVisible = true
       this.load()
     },
     handleDelete(id){
@@ -184,6 +214,10 @@ export default {
     },
     handleDeleteBatch(){
       let ids = this.multipleSelection.map(v => v.id)
+      if(ids.length === 0){
+        this.$message.error("请选择要删除的数据")
+        return
+      }
       roleApi.deleteBatch(ids).then(res=>{
         if (res.code === '200'){
           this.$message.success("批量删除成功");
@@ -201,20 +235,20 @@ export default {
       this.roleId = row.id
       this.roleFlag = row.flag
 
-      menuApi.getByName("").then(res=>{
+      menuApi.queryByName("").then(res=>{
         if(res.code==='200'){
           this.menuData = res.data
           this.expands = this.menuData.map(v=>v.id)
         }
       })
-      roleApi.getMenus(row.id).then(res=>{
+      roleApi.queryMenuById(row.id).then(res=>{
         if(res.code==='200'){
           this.$refs.tree.setCheckedKeys(res.data);
         }
       })
     },
     saveRoleMenu(){
-      roleApi.saveRoleMenus(this.roleId,this.$refs.tree.getCheckedKeys()).then(res=>{
+      roleApi.createRoleMenus(this.roleId,this.$refs.tree.getCheckedKeys()).then(res=>{
         if (res.code === '200'){
           this.menuDialogVisible = false
 

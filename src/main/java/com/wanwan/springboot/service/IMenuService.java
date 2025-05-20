@@ -1,6 +1,7 @@
 package com.wanwan.springboot.service;
 
-import com.wanwan.springboot.entity.Menu;
+import com.wanwan.springboot.pojo.po.Dict;
+import com.wanwan.springboot.pojo.po.Menu;
 import com.baomidou.mybatisplus.extension.service.IService;
 
 import java.util.List;
@@ -15,5 +16,11 @@ import java.util.List;
  */
 public interface IMenuService extends IService<Menu> {
 
-    List<Menu> selectMenus(String name);
+    List<Menu> listMenu(String name);
+
+    boolean saveMenu(Menu menu);
+
+    int updateMenu(Menu menu);
+
+    List<Dict> listIcon();
 }

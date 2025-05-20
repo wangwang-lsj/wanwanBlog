@@ -1,10 +1,10 @@
 <template>
   <div class="GuestBookBg">
-    <div style="display: flex;justify-content: center;" :style="browserWidth<1200?'flex-direction: column':''">
+    <div style="display: flex;justify-content: center;" :style="windowWidth<1200?'flex-direction: column':''">
       <!--留言弹幕-->
-      <div style="flex: 1;max-width: 300px;" class="hidden-md-and-down"></div>
+      <div style="flex: 1;max-width: 300px;" v-if="windowWidth>=1200"></div>
       <!--留言板-->
-      <div style="flex: 2;max-width: 1000px;min-height: 100vh" :style="browserWidth<600?'padding: 0':'padding: 0 10px'">
+      <div style="flex: 2;max-width: 1000px;min-height: 100vh" :style="windowWidth<768?'padding: 0':'padding: 0 10px'">
         <div class="card" style="max-width: 1000px;">
           <div class="block" style="text-align: left;">
             <el-timeline>
@@ -39,8 +39,8 @@
         </div>
       </div>
       <!--留言-->
-      <div style="flex: 1;padding: 0 10px;" :style="browserWidth<1200?'max-width:100%;margin-top: 10px':'max-width: 300px'">
-        <div style="top: 70px;" :style="browserWidth<1200?'position: static':'position: fixed;'">
+      <div style="flex: 1;padding: 0 10px;" :style="windowWidth<1200?'max-width:100%;margin-top: 10px':'max-width: 300px'">
+        <div style="top: 70px;" :style="windowWidth<1200?'position: static':'position: fixed;'">
           <div class="card" style="text-align: right;">
             <el-form>
               <el-form-item label="">
@@ -70,7 +70,7 @@
 
 <script>
 
-import leaveWordApi from "@/api/leaveWordApi.js";
+import messageApi from "@/api/messageApi.js";
 
 export default {
   name: 'GuestBook',
@@ -82,34 +82,39 @@ export default {
       pageSize: 10,
       total: 10,
       messageList:[],
-      browserWidth: window.innerWidth,
+    }
+  },
+  computed: {
+    windowWidth(){
+      return this.$store.state.windowWidth
     }
   },
   created() {
     this.load()
   },
   mounted() {
-    window.addEventListener('resize', this.handleResize);
+    // window.addEventListener('resize', this.handleResize);
   },
   destroyed() {
-    window.removeEventListener('resize', this.handleResize);
+    // window.removeEventListener('resize', this.handleResize);
   },
 
-  beforeRouteEnter(to,from,next){
-    next(vm => {
-      //因为当钩子执行前，组件实例还没被创建
-      // vm 就是当前组件的实例相当于上面的 this，所以在 next 方法里你就可以把 vm 当 this 来用了。
-      window.addEventListener('resize', vm.handleResize);
-    });
-  },
-  // 删除滚动监听器，建议使用beforeRouteLeave，因为destroyed()钩子在路由跳转时不会触发(加了这个就跳不了路由)
-  beforeRouteLeave(to,from,next) {
-    window.removeEventListener('resize', this.handleResize);
-    next()
-  },
+  // beforeRouteEnter(to,from,next){
+  //   next(vm => {
+  //     //因为当钩子执行前，组件实例还没被创建
+  //     // vm 就是当前组件的实例相当于上面的 this，所以在 next 方法里你就可以把 vm 当 this 来用了。
+  //     window.addEventListener('resize', vm.handleResize);
+  //   });
+  //
+  // },
+  // // 删除滚动监听器，建议使用beforeRouteLeave，因为destroyed()钩子在路由跳转时不会触发(加了这个就跳不了路由)
+  // beforeRouteLeave(to,from,next) {
+  //   window.removeEventListener('resize', this.handleResize);
+  //   next()
+  // },
   methods: {
     load(){
-      leaveWordApi.page({
+      messageApi.queryPage({
             pageNum: this.pageNum,
             pageSize: this.pageSize,
       }).then(res => {
@@ -119,7 +124,7 @@ export default {
     },
     sendLeaveMessage(){
       // console.log(this.caller);
-      leaveWordApi.leaveMessage({
+      messageApi.createMessage({
         nickName:this.caller,
         content:this.leaveMessage
       }).then(res=>{
@@ -140,9 +145,6 @@ export default {
     handleCurrentChange(pageNum) {
       this.pageNum=pageNum
       this.load()
-    },
-    handleResize() {
-      this.browserWidth = window.innerWidth;
     },
   }
 

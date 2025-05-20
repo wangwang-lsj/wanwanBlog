@@ -6,10 +6,10 @@ const articleApi = {
      * @param {Object} params - 请求参数
      * @returns {Promise}
      */
-    page(params) {
+    queryPage(params) {
         return request({
             method: "GET",
-            url: "/articles/page",
+            url: "/api/articles/page",
             params,
         });
     },
@@ -19,10 +19,10 @@ const articleApi = {
      * @param {Object} params - 请求参数
      * @returns {Promise}
      */
-    getHots(params) {
+    queryHots(params) {
         return request({
             method: "GET",
-            url: "/articles/hots",
+            url: "/api/articles/hots",
             params
         });
     },
@@ -32,46 +32,36 @@ const articleApi = {
      * @param {Object} params - 请求参数
      * @returns {Promise}
      */
-    getRelations(params) {
+    queryRelations(params) {
         return request({
             method: "GET",
-            url: "/articles/relations",
+            url: "/api/articles/relations",
             params
         });
     },
 
-    /**
-     * 获取所有文章
-     * @returns {Promise}
-     */
-    getAll() {
-        return request({
-            method: "GET",
-            url: "/articles",
-        });
-    },
 
-    /**
-     * 根据ID获取文章详情
-     * @param {string} id - 文章ID
-     * @returns {Promise}
-     */
-    getById(id) {
-        return request({
-            method: "GET",
-            url: "/articles/" + id,
-        });
-    },
+    // /**
+    //  * 根据ID获取文章详情
+    //  * @param {string} id - 文章ID
+    //  * @returns {Promise}
+    //  */
+    // getById(id) {
+    //     return request({
+    //         method: "GET",
+    //         url: "/api/articles/" + id,
+    //     });
+    // },
 
     /**
      * 获取文章全量信息
      * @param {string} id - 文章ID
      * @returns {Promise}
      */
-    getOneAll(id) {
+    queryById(id) {
         return request({
             method: "GET",
-            url: "/articles/" + id + "/all",
+            url: "/api/articles/" + id + "/all",
         });
     },
 
@@ -81,10 +71,10 @@ const articleApi = {
      * @param {string} userId - 用户ID
      * @returns {Promise}
      */
-    getLike(articleId, userId) {
+    queryLike(articleId, userId) {
         return request({
             method: "GET",
-            url: "/articles/" + articleId + "/" + userId,
+            url: "/api/articles/" + articleId + "/" + userId,
         });
     },
 
@@ -92,10 +82,10 @@ const articleApi = {
      * 获取文章统计信息
      * @returns {Promise}
      */
-    statistics() {
+    queryStatistics() {
         return request({
             method: "GET",
-            url: "/articles/statistics",
+            url: "/api/articles/statistics",
         });
     },
 
@@ -103,10 +93,10 @@ const articleApi = {
      * 更新文章
      * @returns {Promise}
      */
-    save(data) {
+    modify(data) {
         return request({
             method: "PUT",
-            url: "/articles",
+            url: "/api/articles",
             data
         });
     },
@@ -119,7 +109,7 @@ const articleApi = {
     create(data) {
         return request({
             method: "POST",
-            url: "/articles",
+            url: "/api/articles",
             data
         });
     },
@@ -129,10 +119,10 @@ const articleApi = {
      * @param {Object} params - 请求参数
      * @returns {Promise}
      */
-    likeOrDisLike(params) {
+    updateLike(params) {
         return request({
             method: "PUT",
-            url: "/articles/likes",
+            url: "/api/articles/likes",
             params
         });
     },
@@ -145,7 +135,7 @@ const articleApi = {
     deleteById(id) {
         return request({
             method: "DELETE",
-            url: "/articles/" + id,
+            url: "/api/articles/" + id,
         });
     },
 
@@ -157,7 +147,7 @@ const articleApi = {
     deleteBatch(ids) {
         return request({
             method: "DELETE",
-            url: "/articles",
+            url: "/api/articles",
             data: ids
         });
     },
@@ -167,16 +157,16 @@ const articleApi = {
      * @param {string} id - 文章ID
      * @returns {Promise}
      */
-    recordReadCount(id) {
+    updateReadCount(id) {
         return request({
             method: "PATCH",
-            url: "/articles/" + id,
+            url: "/api/articles/" + id,
         });
     },
-    changeHomeShow(id,homeShow){
+    updateHomeShow(id, homeShow){
         return request({
             method: "PATCH",
-            url: "/articles/"+id+"/"+homeShow,
+            url: "/api/articles/"+id+"/"+homeShow,
         })
     }
 };

@@ -6,23 +6,23 @@ const commentApi = {
      * @param {Object} params - 请求参数
      * @returns {Promise}
      */
-    getByArticleId(params) {
+    queryPageByCondition(params) {
         return request({
             method: "GET",
-            url: "/comments/page",
+            url: "/api/comments/page",
             params
         });
     },
 
     /**
-     * 获取回复列表
+     * 获取回复列表(因为初次加载只有三条)
      * @param {Object} params - 请求参数
      * @returns {Promise}
      */
-    getReplies(params) {
+    queryReplies(params) {
         return request({
             method: "GET",
-            url: "/comments/replies",
+            url: "/api/comments/replies",
             params
         });
     },
@@ -32,10 +32,10 @@ const commentApi = {
      * @param {string} id - 文章ID
      * @returns {Promise}
      */
-    getCountByArticleId(id) {
+    queryCountByArticleId(id) {
         return request({
             method: "GET",
-            url: "/comments/" + id
+            url: "/api/comments/" + id
         });
     },
 
@@ -44,10 +44,10 @@ const commentApi = {
      * @param {Object} data - 请求体数据
      * @returns {Promise}
      */
-    addComment(data) {
+    createComment(data) {
         return request({
             method: "POST",
-            url: "/comments",
+            url: "/api/comments",
             data
         });
     },
@@ -58,10 +58,10 @@ const commentApi = {
      * @param {string} userId - 用户ID
      * @returns {Promise}
      */
-    like(commentId, userId) {
+    updateLike(commentId, userId) {
         return request({
             method: "POST",
-            url: `/comments/like/${commentId}/${userId}`
+            url: `/api/comments/like/${commentId}/${userId}`
         });
     },
 
@@ -71,10 +71,10 @@ const commentApi = {
      * @param {string} userId - 用户ID
      * @returns {Promise}
      */
-    disLike(commentId, userId) {
+    updateDisLike(commentId, userId) {
         return request({
             method: "POST",
-            url: `/comments/dislike/${commentId}/${userId}`
+            url: `/api/comments/dislike/${commentId}/${userId}`
         });
     }
 };

@@ -54,7 +54,7 @@
         <transition>
             <div v-show="toastShow" class="toast" :style="{ 'background-color': bgColor}">
                 <i :class="['icon','iconfont',typeIcon]" :style="{ 'background-color': bgColor }"></i>
-                <span>{{ message }}</span>
+                <span>{{ messageApi }}</span>
             </div>
         </transition>
     </div>
